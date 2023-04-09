@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>CourseRecommendationMysql</artifactId>
+    <artifactId>CourseRecommendationNeo4j</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>CourseRecommendation</name>
     <description>CourseRecommendation</description>
@@ -103,7 +103,13 @@
         <dependency>
             <groupId>com.hankcs</groupId>
             <artifactId>hanlp</artifactId>
-            <version>portable-1.7.6</version>
+            <systemPath>${basedir}/src/main/resources/lib/hanlp-portable-1.7.6.jar</systemPath>
+        </dependency>
+
+        <!-- neo4j -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-neo4j</artifactId>
         </dependency>
 
     </dependencies>

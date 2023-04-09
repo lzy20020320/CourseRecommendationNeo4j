@@ -7,6 +7,11 @@ spring:
     url: jdbc:mysql://localhost:3306/course_recommendation?serverTimezone=GMT%2b8
     username: root
     password: 1111
+  neo4j:
+    authentication:
+      password: 11111111
+      username: neo4j
+    uri: bolt://localhost:7687
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
