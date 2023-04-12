@@ -3,7 +3,6 @@ package com.example.CourseRecommendation.controller.course;
 import com.example.CourseRecommendation.config.MyConfig;
 import com.example.CourseRecommendation.controller.message.Message;
 import com.example.CourseRecommendation.entity.Course;
-import com.example.CourseRecommendation.entity.StudentInfo;
 import com.example.CourseRecommendation.service.CourseService;
 import com.example.CourseRecommendation.service.OpenCourseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,21 +20,21 @@ public class CourseController {
     @Autowired
     private CourseService courseService;
 
-    @GetMapping("/openCourse/saveAll")
-    public void saveAllOpenCourse() {
-        openCourseService.saveAllOpenCourse();
-    }
-
-    @GetMapping("/insertAllInfo")
-    public void insertAllCourseInfo(@RequestBody StudentInfo studentInfo) {
-        courseService.downloadAllCourseInfo(studentInfo.getStudent_id(), studentInfo.getStudent_pwd());
-        courseService.insertAllCourseInfo();
-    }
-
-    @DeleteMapping("/openCourse/delete")
-    public boolean deleteOpenCourse(@RequestParam String c_no) {
-        return openCourseService.removeById(c_no);
-    }
+//    @GetMapping("/openCourse/saveAll")
+//    public void saveAllOpenCourse() {
+//        openCourseService.saveAllOpenCourse();
+//    }
+//
+//    @GetMapping("/insertAllInfo")
+//    public void insertAllCourseInfo(@RequestBody StudentInfo studentInfo) {
+//        courseService.downloadAllCourseInfo(studentInfo.getStudent_id(), studentInfo.getStudent_pwd());
+//        courseService.insertAllCourseInfo();
+//    }
+//
+//    @DeleteMapping("/openCourse/delete")
+//    public boolean deleteOpenCourse(@RequestParam String c_no) {
+//        return openCourseService.removeById(c_no);
+//    }
 
     @GetMapping("/find")
     public List<Course> findCourse(@RequestParam String course_name) {

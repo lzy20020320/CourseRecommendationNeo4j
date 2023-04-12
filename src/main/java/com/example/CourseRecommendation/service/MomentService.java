@@ -1,6 +1,7 @@
 package com.example.CourseRecommendation.service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.CourseRecommendation.dao.UserRepository;
 import com.example.CourseRecommendation.entity.Moment;
 import com.example.CourseRecommendation.mapper.MomentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,17 @@ import java.util.Objects;
 public class MomentService extends ServiceImpl<MomentMapper, Moment> {
     @Autowired
     MomentMapper momentMapper;
+
+    @Autowired
+    UserRepository userRepository;
+
+
+    public void updateRelationUser2Course(String u_id, String c_no, boolean recommend) {
+        if (recommend)
+            userRepository.updateUserRecommendCourse(u_id, c_no);
+        else
+            userRepository.updateUserUnlikeCourse(u_id, c_no);
+    }
 
     public List<Map<String, Object>> getFollowMoments(String u_id, Integer pageNum, Integer pageSize) {
         Integer pageBegin = (pageNum - 1) * pageSize;

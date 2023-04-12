@@ -1,29 +1,73 @@
 package com.example.CourseRecommendation.dao;
 
-import com.example.CourseRecommendation.node.Course;
+import com.example.CourseRecommendation.node.Neo4jCourse;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 
 import java.util.List;
 
-public interface CourseRepository extends Neo4jRepository<Course, Long> {
-    @Query("MATCH(n:course) WHERE n.name =~('.*' + $cname + '.*') RETURN n.aim LIMIT 1")
-    String getCourseDetail(@Param(value = "cname") String cname);
+public interface CourseRepository extends Neo4jRepository<Neo4jCourse, Long> {
 
-    @Query("match (n:teacher{name: $tname})-[r:TEACHES]->(c:course) return c.name")
-    List<String> getCourseNameByTName(@Param(value = "tname") String tname);
 
-    @Query("match (n:teacher{name: $tname})-[r:TEACHES]->(c:course)-[r2:BELONGS_TO]->(ca:category) " +
-            "return distinct ca.name")
-    List<String> getCategoryNameByTName(@Param(value = "tname") String tname);
+    //    @Query("MATCH(c:course) WHERE c.no=$cno RETURN *")
+//    Neo4jCourse getCourseInfoByCourseNo(@Param("cno") String cno);
+//
+//    @Query("MATCH(n:course) WHERE n.name =~('.*' + $cname + '.*') RETURN *")
+//    List<Neo4jCourse> findCoursesByName(@Param("cname") String $cname);
+//
+//    @Query("match(:course{no: $cno})-[r:BELONGS_TO]->(c:category) return c.name")
+//    String getCategoryByCno(@Param("cno") String cno);
+//
+    @Query("create (:course{no: $no,name:$name,credit:$credit})")
+    void createCourse(@Param(value = "no") String courseId,
+                      @Param(value = "name") String courseName,
+                      @Param(value = "credit") String credits);
 
-    @Query("match (t:teacher)-[r:TEACHES]->(c:course{name: $cname}) return distinct t.name")
-    List<String> getTNameByCourseName(@Param(value = "cname") String cname);
+    //
+    @Query("match (co:course),(ca:category) where co.no=$no and ca.name=$name create (co)-[:BELONGS_TO]->(ca)")
+    void classifyCourse(@Param(value = "no") String courseId,
+                        @Param(value = "name") String categoryName);
 
-    @Query("match (n:teacher{name: $tname})-[r:TEACHES]->(c:course) return count(*)")
-    int getCourseNumByTName(@Param(value = "tname") String tname);
+    //
+//    @Query("match (c:course),(s:student) where c.no=$courseId and s.student_id=$studentId create (s)-[r:SELECT{category:$category,term:$term,select:$select}]->(c)")
+//    void insertLessonPlan(@Param("studentId") String studentId, @Param("courseId") String courseId, @Param("category") String courseKind, @Param("term") String semester, @Param("select") boolean select);
+    @Query("match(u:user{openid:$openid}),(c:course{no:$no}) create(u)-[r:SELECT{category:$name}]->(c)")
+    void selectCourse(@Param("openid") String openid,
+                      @Param(value = "no") String courseId,
+                      @Param(value = "name") String categoryName);
 
-    @Query("match (c:course)-[r:BELONGS_TO]->(ca:category) where c.name =~('.*' + $cname + '.*') return ca.name limit 1")
-    String getCourseCategoryByCName(@Param(value = "cname") String cname);
+
+    @Query("MATCH (i:user{openid:$openid}),(other:user) " +
+            "where other.openid <> $openid " +
+            "WITH i,other " +
+            "OPTIONAL MATCH common=(i)-[:RECOMMEND]->(:course)<-[:RECOMMEND]-(other) " +
+            "WITH i, other, COUNT(common) as intersection " +
+            "OPTIONAL MATCH (i)-[:RECOMMEND]->(myFavour:course) " +
+            "WITH i, other, intersection, collect(myFavour) as myFavour,count(myFavour) as myFavourNum  " +
+            "OPTIONAL MATCH (other)-[:RECOMMEND]->(otherFavour:course)  " +
+            "WHERE NOT otherFavour IN myFavour  " +
+            "WITH i, other, intersection, count(otherFavour) AS recommendationNum,myFavourNum,otherFavour as recommendation  " +
+            "where intersection/toFloat(recommendationNum+myFavourNum) > 0.2  " +
+            "with recommendation,count(recommendation) as r_num " +
+            "return recommendation as course " +
+            "order by r_num desc limit 5")
+    List<Neo4jCourse> getRecommendedCourseByRecommendation(@Param(value = "openid") String openid);
+
+
+    @Query("MATCH (i:user{openid:$openid}),(other:user) " +
+            "where other.openid <> $openid " +
+            "WITH i,other " +
+            "OPTIONAL MATCH common=(i)-[:SELECT{category:'通识课'}]->(:course)<-[:SELECT{category:'通识课'}]-(other) " +
+            "WITH i, other, COUNT(common) as intersection " +
+            "OPTIONAL MATCH (i)-[:SELECT{category:'通识课'}]->(myFavour:course) " +
+            "WITH i, other, intersection, collect(myFavour) as myFavour,count(myFavour) as myFavourNum  " +
+            "OPTIONAL MATCH (other)-[:SELECT{category:'通识课'}]->(otherFavour:course)  " +
+            "WHERE NOT otherFavour IN myFavour  " +
+            "WITH i, other, intersection, count(otherFavour) AS recommendationNum,myFavourNum,otherFavour as recommendation  " +
+            "where intersection/toFloat(recommendationNum+myFavourNum) > 0.2  " +
+            "with recommendation,count(recommendation) as r_num " +
+            "return recommendation as course " +
+            "order by r_num desc limit 5")
+    List<Neo4jCourse> getRecommendedCourseBySelection(@Param(value = "openid") String openid);
 }

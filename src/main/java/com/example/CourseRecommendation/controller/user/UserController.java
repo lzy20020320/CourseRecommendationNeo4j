@@ -1,7 +1,12 @@
 package com.example.CourseRecommendation.controller.user;
 
+import com.example.CourseRecommendation.controller.message.Message;
+import com.example.CourseRecommendation.dao.UserRepository;
 import com.example.CourseRecommendation.entity.OpenCourse;
 import com.example.CourseRecommendation.entity.StudentInfo;
+import com.example.CourseRecommendation.entity.Course;
+import com.example.CourseRecommendation.entity.User;
+import com.example.CourseRecommendation.node.Neo4jCourse;
 import com.example.CourseRecommendation.service.CourseService;
 import com.example.CourseRecommendation.service.UserService;
 import com.example.CourseRecommendation.utils.HttpUtils;
@@ -22,10 +27,49 @@ public class UserController {
 
     @Autowired
     UserService userService;
+    @Autowired
+    UserRepository userRepository;
 
-    @PostMapping("/lessonPlan/insert")
-    public boolean insertLessonPlan(@RequestBody StudentInfo studentInfo) {
-        return userService.insertAllLessonPlan(studentInfo.getStudent_id(), studentInfo.getStudent_pwd());
+
+    @GetMapping("/login")
+    public Map<String, Object> login(@RequestParam("openid") String openid) {
+        Message message = new Message();
+        message.setMessage(userService.login(openid));
+        return message;
+    }
+
+    @GetMapping("/sign")
+    public boolean sign() {
+        return false;
+    }
+
+    @GetMapping("/updateNickname")
+    public boolean updateNickname(@RequestParam("openid") String u_id,
+                                  @RequestParam("nickname") String nickname) {
+        return userService.updateNickname(u_id, nickname);
+    }
+
+
+    @GetMapping("/updateAvatar")
+    public boolean updateNickname(@RequestParam("openid") String u_id) {
+        return userService.updateAvatar(u_id);
+    }
+
+
+    @GetMapping("/bindStudent")
+    public boolean bindStudentId(@RequestParam("openid") String u_id,
+                                 @RequestParam("student_id") String student_id,
+                                 @RequestParam("student_pwd") String student_pwd) {
+        userService.bindStudentId(u_id, student_id);
+        return userService.insertAllLessonPlan(u_id,student_id, student_pwd);
+    }
+
+
+    @GetMapping("/lessonPlan/insert")
+    public boolean insertLessonPlan(@RequestParam("openid") String u_id,
+                                    @RequestParam("student_id") String student_id,
+                                    @RequestParam("student_pwd") String student_pwd) {
+        return userService.insertAllLessonPlan(u_id,student_id, student_pwd);
     }
 
 
@@ -40,33 +84,27 @@ public class UserController {
     }
 
     @GetMapping("/recommendedCourse/get")
-    public List<OpenCourse> getRecommendedCourses(@RequestParam String student_id) {
+    public List<Neo4jCourse> getRecommendedCourses(@RequestParam("student_id") String student_id) {
         return userService.getRecommendedCourses(student_id);
+
     }
 
-    @PostMapping("/login")
-    public boolean login() {
-        return false;
-    }
 
-    @PostMapping("/sign")
-    public boolean sign() {
-        return false;
-    }
-
-    @DeleteMapping("/delete")
-    public boolean deleteUser(@RequestParam String u_id) {
-        return userService.removeById(u_id);
-    }
+//    @DeleteMapping("/delete")
+//    public boolean deleteUser(@RequestParam String u_id) {
+//        return userService.removeById(u_id);
+//    }
 
 
     @GetMapping("/followUser")
-    public boolean followUser(@RequestParam String following_id, @RequestParam String follower_id) {
+    public boolean followUser(@RequestParam String following_id,
+                              @RequestParam String follower_id) {
         return userService.followUser(following_id, follower_id);
     }
 
     @DeleteMapping("/followUser/delete")
-    public boolean deleteFollowUser(@RequestParam String following_id, @RequestParam String follower_id) {
+    public boolean deleteFollowUser(@RequestParam String following_id,
+                                    @RequestParam String follower_id) {
         return userService.deleteFollowUser(following_id, follower_id);
     }
 
@@ -76,12 +114,14 @@ public class UserController {
     }
 
     @GetMapping("/followCourse")
-    public boolean followCourse(@RequestParam String following_cno, @RequestParam String follower_id) {
+    public boolean followCourse(@RequestParam String following_cno,
+                                @RequestParam String follower_id) {
         return userService.followCourse(following_cno, follower_id);
     }
 
     @DeleteMapping("/followCourse/delete")
-    public boolean deleteFollowCourse(@RequestParam String following_cno, @RequestParam String follower_id) {
+    public boolean deleteFollowCourse(@RequestParam String following_cno,
+                                      @RequestParam String follower_id) {
         return userService.deleteFollowCourse(following_cno, follower_id);
     }
 

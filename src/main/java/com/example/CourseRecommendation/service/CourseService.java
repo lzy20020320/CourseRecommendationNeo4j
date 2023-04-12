@@ -32,17 +32,19 @@ public class CourseService extends ServiceImpl<CourseMapper, Course> {
         return courseMapper.selectList(wrapper);
     }
 
-    public void downloadAllCourseInfo(String user_name, String pwd) {
-        CourseGetter.saveAllCourseInfo(user_name,pwd);
-    }
-
-    public void insertAllCourseInfo() {
-        List<String> cnoList = courseMapper.selectAllCno();
-        for(String cno :cnoList)
-            courseMapper.updateCourseInfo(CourseGetter.getCourseInfo(cno));
-    }
+//    public void downloadAllCourseInfo(String user_name, String pwd) {
+//        CourseGetter.saveAllCourseInfo(user_name,pwd);
+//    }
+//
+//    public void insertAllCourseInfo() {
+//        List<String> cnoList = courseMapper.selectAllCno();
+//        for(String cno :cnoList)
+//            courseMapper.updateCourseInfo(CourseGetter.getCourseInfo(cno));
+//    }
 
     public Map<String,Object> selectById(String no){
         return courseMapper.selectByNo(no);
     }
+
+
 }

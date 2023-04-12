@@ -29,4 +29,44 @@ public interface CourseMapper extends BaseMapper<Course> {
 
     @Select("select * from course where c_no = #{no} ")
     Map<String,Object> selectByNo(@Param("no") String no);
+
+    @Select("select c_no ," +
+            "            c_name," +
+            "            c_credit," +
+            "            c_category," +
+            "            c_aim," +
+            "            c_content," +
+            "            c_reference," +
+            "            c_prerequisite," +
+            "            c_target_student" +
+            "                    from (select course.c_no," +
+            "                            c_name," +
+            "                            c_credit," +
+            "                            c_category," +
+            "                            c_aim," +
+            "                            c_content," +
+            "                            c_reference," +
+            "                            c_prerequisite," +
+            "                            c_target_student," +
+            "                            count(m_recommended) as r_num" +
+            "                            from moment," +
+            "                            course" +
+            "                            where m_recommended = 1" +
+            "                            and moment.c_no = course.c_no" +
+            "                            and course.c_category =" +
+            "                                    (select cn.category" +
+            "                            from (select course.c_category as category, count(c_category) as num" +
+            "                                    from lesson_plan," +
+            "                                    course" +
+            "                                    where u_student_id = (select user.u_student_id" +
+            "                                    from user" +
+            "                                    where u_id = 'oY9YO5Qu2VMawql3jCmCE41OitD0')" +
+            "                            and lp_category = '通识课'" +
+            "                            and lesson_plan.c_no = course.c_no" +
+            "                            group by course.c_category " +
+            "                            order by num desc" +
+            "                            limit 1) as cn)" +
+            "    group by c_no" +
+            "    order by r_num desc) as `c.*rn`")
+    List<Map<String,Object>> recommendByCategory(@Param("u_id") String u_id);
 }
