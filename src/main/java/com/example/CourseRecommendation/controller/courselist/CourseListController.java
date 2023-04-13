@@ -23,7 +23,7 @@ public class CourseListController {
         CourseListMessage courseListMessage = new CourseListMessage();
         List<Course> courses = courseService.selectAll();
         for (Course course :courses)
-            courseListMessage.addCourse(course.getName(),course.getCategory(),course.getNo(), MyConfig.ADDR+"/img/courseicon/icon.jpg");
+            courseListMessage.addCourse(course.getName(),course.getCategory(),course.getNo(), course.getUrl());
         return courseListMessage;
     }
 }

@@ -1,7 +1,6 @@
 package com.example.CourseRecommendation.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.example.CourseRecommendation.entity.Course;
 import com.example.CourseRecommendation.entity.User;
 import org.apache.ibatis.annotations.*;
 
@@ -14,12 +13,22 @@ public interface UserMapper extends BaseMapper<User> {
 
     @Insert("insert ignore into course_recommendation.user(u_id) " +
             "VALUES (#{u_id})")
-    int creatUser(@Param("u_id") String u_id);
+    int createWxUser(@Param("u_id") String u_id);
 
 
-    @Select("select u_id, u_student_id, u_nickname, u_college from user where u_id=#{u_id}")
+    @Insert("insert ignore into course_recommendation.user(u_id,u_pwd) " +
+            "VALUES (#{u_id},#{u_pwd})")
+    int createUser(@Param("u_id") String u_id, @Param("u_pwd") String u_pwd);
+
+
+    @Select("select u_id, u_student_id, u_nickname, u_college " +
+            "from user where u_id=#{u_id}")
     Map<String, Object> selectById(@Param("u_id") String u_id);
 
+
+
+    @Select("select u_id, u_student_id, u_nickname, u_college from user where u_id=#{u_id} and u_pwd = #{u_pwd}")
+    Map<String, Object> selectByIdAndPwd(@Param("u_id") String u_id,@Param("u_pwd") String u_pwd);
 
     @Update("update user " +
             "set u_student_id = #{student_id} " +

@@ -37,15 +37,15 @@ public class CourseController {
 //    }
 
     @GetMapping("/find")
-    public List<Course> findCourse(@RequestParam String course_name) {
+    public List<Course> findCourse(@RequestParam("course_name") String course_name) {
         return courseService.find(course_name);
     }
 
     @GetMapping("/detail")
-    public Map<String,Object> getCourseDetail(@RequestParam String c_no) {
+    public Map<String,Object> getCourseDetail(@RequestParam("course_no") String course_no) {
         Message message = new Message();
-        Map<String,Object> data = courseService.selectById(c_no);
-        data.put("url", MyConfig.ADDR+"/img/courseicon/icon.jpg");
+        Map<String,Object> data = courseService.selectById(course_no);
+        data.put("url", Course.getUrl(course_no));
         message.setMessage(data);
         return message;
     }

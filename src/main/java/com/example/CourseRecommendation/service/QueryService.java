@@ -1,16 +1,12 @@
 package com.example.CourseRecommendation.service;
 
-import com.example.CourseRecommendation.dao.CourseRepository;
 import com.example.CourseRecommendation.dao.QueryRepository;
-import com.example.CourseRecommendation.mapper.CourseMapper;
 import com.example.CourseRecommendation.utils.QClassifier;
 import com.hankcs.hanlp.seg.common.Term;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static com.example.CourseRecommendation.utils.QClassifier.*;
 
@@ -69,10 +65,8 @@ public class QueryService {
                 break;
             }
             case 5: {
-                int cnum = 0;
                 String tname = getTeacherName(terms);
-                cnum = queryRepository.getCourseNumByTName(tname);
-                answer = getAnswer5(tname, cnum);
+                answer = getAnswer5(tname, queryRepository.getCourseNumByTName(tname));
                 break;
             }
         }

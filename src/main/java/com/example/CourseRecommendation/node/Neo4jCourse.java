@@ -59,6 +59,10 @@ public class Neo4jCourse {
 
     private String url = MyConfig.ADDR + "/img/courseicon/icon.jpg";
 
+    public void setUrl(){
+        url = MyConfig.ADDR + "/img/courseicon/icon.jpg";
+    }
+
     public static Neo4jCourse Map2Neo4jCourse(Map<String, Object> course) {
         Neo4jCourse neo4jCourse = new Neo4jCourse();
         if (course.get("c_no") != null)

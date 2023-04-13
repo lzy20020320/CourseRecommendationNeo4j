@@ -32,15 +32,18 @@ public class UserController {
 
 
     @GetMapping("/login")
-    public Map<String, Object> login(@RequestParam("openid") String openid) {
-        Message message = new Message();
-        message.setMessage(userService.login(openid));
-        return message;
+    public Map<String, Object> login(@RequestParam("openid") String openid,
+                                     @RequestParam("user_pwd") String password) {
+        if (openid.length() != 11)
+            return userService.login(openid);
+        else
+            return userService.login(openid, password);
     }
 
     @GetMapping("/sign")
-    public boolean sign() {
-        return false;
+    public Map<String, Object> sign(@RequestParam("openid") String openid,
+                                    @RequestParam("user_pwd") String password) {
+        return userService.sign(openid, password);
     }
 
     @GetMapping("/updateNickname")
@@ -51,7 +54,7 @@ public class UserController {
 
 
     @GetMapping("/updateAvatar")
-    public boolean updateNickname(@RequestParam("openid") String u_id) {
+    public boolean updateAvatar(@RequestParam("openid") String u_id) {
         return userService.updateAvatar(u_id);
     }
 
@@ -61,7 +64,7 @@ public class UserController {
                                  @RequestParam("student_id") String student_id,
                                  @RequestParam("student_pwd") String student_pwd) {
         userService.bindStudentId(u_id, student_id);
-        return userService.insertAllLessonPlan(u_id,student_id, student_pwd);
+        return userService.insertAllLessonPlan(u_id, student_id, student_pwd);
     }
 
 
@@ -69,23 +72,23 @@ public class UserController {
     public boolean insertLessonPlan(@RequestParam("openid") String u_id,
                                     @RequestParam("student_id") String student_id,
                                     @RequestParam("student_pwd") String student_pwd) {
-        return userService.insertAllLessonPlan(u_id,student_id, student_pwd);
+        return userService.insertAllLessonPlan(u_id, student_id, student_pwd);
     }
 
 
     @GetMapping("/lessonPlan/get")
-    public List<Map<String, Object>> getLessonPlan(@RequestParam String student_id) {
+    public List<Map<String, Object>> getLessonPlan(@RequestParam("student_id") String student_id) {
         return userService.getLessonPlan(student_id);
     }
 
     @GetMapping("/lessonPlan/selected")
-    public List<Map<String, Object>> getSelectedLesson(@RequestParam String student_id) {
+    public List<Map<String, Object>> getSelectedLesson(@RequestParam("student_id") String student_id) {
         return userService.getSelectedLesson(student_id);
     }
 
     @GetMapping("/recommendedCourse/get")
-    public List<Neo4jCourse> getRecommendedCourses(@RequestParam("student_id") String student_id) {
-        return userService.getRecommendedCourses(student_id);
+    public List<Neo4jCourse> getRecommendedCourses(@RequestParam("openid") String openid) {
+        return userService.getRecommendedCourses(openid);
 
     }
 
@@ -97,36 +100,36 @@ public class UserController {
 
 
     @GetMapping("/followUser")
-    public boolean followUser(@RequestParam String following_id,
-                              @RequestParam String follower_id) {
-        return userService.followUser(following_id, follower_id);
+    public boolean followUser(@RequestParam("followed_openid") String followed_id,
+                              @RequestParam("follower_openid") String follower_id) {
+        return userService.followUser(followed_id, follower_id);
     }
 
     @DeleteMapping("/followUser/delete")
-    public boolean deleteFollowUser(@RequestParam String following_id,
-                                    @RequestParam String follower_id) {
-        return userService.deleteFollowUser(following_id, follower_id);
+    public boolean deleteFollowUser(@RequestParam("followed_openid") String followed_id,
+                                    @RequestParam("follower_openid") String follower_id) {
+        return userService.deleteFollowUser(followed_id, follower_id);
     }
 
     @GetMapping("/followUser/get")
-    public List<Map<String, Object>> getFollowUsers(@RequestParam String follower_id) {
+    public List<Map<String, Object>> getFollowUsers(@RequestParam("follower_openid") String follower_id) {
         return userService.getFollowUsers(follower_id);
     }
 
     @GetMapping("/followCourse")
-    public boolean followCourse(@RequestParam String following_cno,
-                                @RequestParam String follower_id) {
+    public boolean followCourse(@RequestParam("followed_course_no") String following_cno,
+                                @RequestParam("follower_openid") String follower_id) {
         return userService.followCourse(following_cno, follower_id);
     }
 
     @DeleteMapping("/followCourse/delete")
-    public boolean deleteFollowCourse(@RequestParam String following_cno,
-                                      @RequestParam String follower_id) {
+    public boolean deleteFollowCourse(@RequestParam("followed_course_no") String following_cno,
+                                      @RequestParam("follower_openid") String follower_id) {
         return userService.deleteFollowCourse(following_cno, follower_id);
     }
 
     @GetMapping("/followCourse/get")
-    public List<Map<String, Object>> getFollowCourses(@RequestParam String follower_id) {
+    public List<Map<String, Object>> getFollowCourses(@RequestParam("follower_openid") String follower_id) {
         return userService.getFollowCourses(follower_id);
     }
 

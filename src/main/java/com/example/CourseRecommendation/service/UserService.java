@@ -1,13 +1,10 @@
 package com.example.CourseRecommendation.service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.example.CourseRecommendation.config.MyConfig;
+import com.example.CourseRecommendation.controller.message.Message;
 import com.example.CourseRecommendation.dao.CourseRepository;
-import com.example.CourseRecommendation.dao.UserRepository;
-import com.example.CourseRecommendation.entity.OpenCourse;
 import com.example.CourseRecommendation.entity.User;
 import com.example.CourseRecommendation.mapper.*;
-import com.example.CourseRecommendation.entity.Course;
 import com.example.CourseRecommendation.node.Neo4jCourse;
 import com.example.CourseRecommendation.utils.CourseClassifier;
 import com.example.CourseRecommendation.utils.crawler.java.CourseGetter.CourseGetter;
@@ -74,24 +71,74 @@ public class UserService extends ServiceImpl<UserMapper, User> {
 
     public List<Neo4jCourse> getRecommendedCourses(String studentId) {
         int min_len = 100;
-        List<Neo4jCourse> neo4jCourses = courseRepository.getRecommendedCourseByRecommendation(studentId);
-        if (neo4jCourses.size() < min_len)
-            neo4jCourses.addAll(courseRepository.getRecommendedCourseBySelection(studentId));
-        if (neo4jCourses.size() < min_len) {
-            List<Map<String, Object>> courses = courseMapper.recommendByCategory(studentId);
-            for (Map<String, Object> course : courses) {
-                neo4jCourses.add(Neo4jCourse.Map2Neo4jCourse(course));
+        List<Neo4jCourse> recommendedCourses = new ArrayList<>();
+        List<String> courseNames = new ArrayList<>();
+        List<Neo4jCourse> recommendedCourseByRecommendation = courseRepository.getRecommendedCourseByRecommendation(studentId);
+
+        for (Neo4jCourse course : recommendedCourseByRecommendation) {
+            course.setUrl();
+            recommendedCourses.add(course);
+            courseNames.add(course.getName());
+        }
+
+        if (recommendedCourses.size() < min_len) {
+            List<Neo4jCourse> recommendedCourseBySelection = courseRepository.getRecommendedCourseBySelection(studentId);
+            for (Neo4jCourse course : recommendedCourseBySelection) {
+                if (!courseNames.contains(course.getName())) {
+                    course.setUrl();
+                    recommendedCourses.add(course);
+                    courseNames.add(course.getName());
+                }
             }
         }
-        return neo4jCourses;
+
+        if (recommendedCourses.size() < min_len) {
+            List<Map<String, Object>> courses = courseMapper.recommendByCategory(studentId);
+            for (Map<String, Object> course : courses) {
+                Neo4jCourse neo4jCourse = Neo4jCourse.Map2Neo4jCourse(course);
+                if (!courseNames.contains(neo4jCourse.getName())) {
+                    neo4jCourse.setUrl();
+                    recommendedCourses.add(neo4jCourse);
+                    courseNames.add(neo4jCourse.getName());
+                }
+            }
+        }
+
+        return recommendedCourses;
     }
 
     public Map<String, Object> login(String u_id) {
-        userMapper.creatUser(u_id);
+        Message message = new Message();
+        userMapper.createWxUser(u_id);
         Map<String, Object> userInfo = userMapper.selectById(u_id);
-        userInfo.put("url", MyConfig.ADDR + "/img/courseicon/icon.jpg");
-        return userInfo;
+        userInfo.put("url", User.getUrl(u_id));
+        message.setMessage(userInfo);
+        return message;
     }
+
+
+    public Map<String, Object> login(String u_id, String u_pwd) {
+        Message message = new Message();
+        Map<String, Object> userInfo = userMapper.selectByIdAndPwd(u_id, u_pwd);
+        if (userInfo == null)
+            message.setMeta("FAIL", 200);
+        else {
+            userInfo.put("url", User.getUrl(u_id));
+            message.setMeta("SUCCESS", 200);
+            message.setMessage(userInfo);
+        }
+        return message;
+    }
+
+    public Map<String, Object> sign(String u_id, String u_pwd) {
+        Message message = new Message();
+        if (u_id.length() == 11 && userMapper.createUser(u_id, u_pwd) != 0)
+            message.setMeta("SUCCESS", 200);
+        else
+            message.setMeta("FAIL", 200);
+        return message;
+    }
+
 
     public boolean updateNickname(String u_id, String nickName) {
         return userMapper.updateNickname(u_id, nickName);

@@ -3,6 +3,7 @@ package com.example.CourseRecommendation.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.example.CourseRecommendation.config.MyConfig;
 import lombok.Data;
 
 @Data
@@ -26,5 +27,14 @@ public class Course {
     private String prerequisite;
     @TableField("c_target_student")
     private String targetStudent;
+
+
+    public String getUrl(){
+        return MyConfig.ADDR + "/img/courseicon/icon.jpg";
+    }
+
+    public static String getUrl(String c_no){
+        return MyConfig.ADDR + "/img/courseicon/icon.jpg"; //TODO
+    }
 
 }

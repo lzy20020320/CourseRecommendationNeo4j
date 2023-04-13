@@ -97,7 +97,6 @@ public class QClassifier {
 
     private static List<String> initAnswers() {
         List<String> answersList = new ArrayList<>();
-
         try (BufferedReader br = new BufferedReader(new FileReader("src/main/resources/txt/answer.txt"))) {
             String line;
             while ((line = br.readLine()) != null) {
@@ -110,7 +109,10 @@ public class QClassifier {
         return answersList;
     }
 
+    // 0:cname的简介如下：content。
     public static String getAnswer0(String cname, String brief) {
+        if (brief == null || brief.length() == 0 || cname.length() == 0 )
+            return "抱歉，暂无该课程的简介。";
         String answer = answers.get(0);
         answer = answer.replace("cname", cname);
         answer = answer.replace("content", brief);
@@ -118,7 +120,11 @@ public class QClassifier {
         return answer;
     }
 
+
+    // 1:cname课程的类型是category。
     public static String getAnswer1(String cname, String category) {
+        if (category == null || category.length() == 0|| cname.length() == 0)
+            return "抱歉，未查询到该课程的类型。";
         String answer = answers.get(1);
         answer = answer.replace("cname", cname);
         answer = answer.replace("category", category);
@@ -126,14 +132,18 @@ public class QClassifier {
         return answer;
     }
 
+
+    // 2:有tname老师教cname课程。
     public static String getAnswer2(String cname, List<String> tname_list) {
+        if (tname_list == null || tname_list.size() == 0|| cname.length() == 0)
+            return "抱歉，未查询到教授该课程的教师。";
         String answer = answers.get(2);
         String tnames = "";
         for (String tname : tname_list) {
             tnames = tnames + tname;
             tnames = tnames + ",";
         }
-        if(!tnames.isEmpty())
+        if (!tnames.isEmpty())
             tnames = tnames.substring(0, tnames.length() - 1);
         answer = answer.replace("tname", tnames);
         answer = answer.replace("cname", cname);
@@ -141,15 +151,17 @@ public class QClassifier {
         return answer;
     }
 
+    // 3:tname老师教授以下这些课程：cname。
     public static String getAnswer3(String tname, List<String> cname_list) {
-        if (cname_list.isEmpty()) return "";
+        if (cname_list == null || cname_list.size() == 0|| tname.length() == 0)
+            return "抱歉，未查询到该教师教授的课程。";
         String answer = answers.get(3);
         String cnames = "";
         for (String cname : cname_list) {
             cnames = cnames + cname;
             cnames = cnames + ",";
         }
-        if(!cnames.isEmpty())
+        if (!cnames.isEmpty())
             cnames = cnames.substring(0, cnames.length() - 1);
         answer = answer.replace("tname", tname);
         answer = answer.replace("cname", cnames);
@@ -157,14 +169,17 @@ public class QClassifier {
         return answer;
     }
 
+
+    // 4:tname老师教授以下这些类型的课程：category。
     public static String getAnswer4(String tname, List<String> category_list) {
-        if (category_list.isEmpty()) return "";
+        if (category_list == null || category_list.size() == 0|| tname.length() == 0)
+            return "抱歉，未查询到该教师教授的课程类别。";
         String categorys = "";
         for (String category : category_list) {
             categorys = categorys + category;
             categorys = categorys + ",";
         }
-        if(!categorys.isEmpty())
+        if (!categorys.isEmpty())
             categorys = categorys.substring(0, categorys.length() - 1);
         String answer = answers.get(4);
         answer = answer.replace("tname", tname);
@@ -173,6 +188,8 @@ public class QClassifier {
         return answer;
     }
 
+
+    // 5:tname老师教的课程总数为cnum。
     public static String getAnswer5(String tname, int cnum) {
         String answer = answers.get(5);
         answer = answer.replace("tname", tname);
