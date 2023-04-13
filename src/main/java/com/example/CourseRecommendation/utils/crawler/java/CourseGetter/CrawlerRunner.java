@@ -8,7 +8,7 @@ class CrawlerRunner {
         try {
             String[] command = {"pipenv", "run", "python", "personalCrawler.py", "-u", name, "-p", pwd};
             ProcessBuilder builder = new ProcessBuilder(command);
-            builder.directory(new File("src\\main\\java\\com\\example\\CourseRecommendation\\utils\\crawler\\python"));
+            builder.directory(new File("src\\main\\resources\\python"));
             Process process = builder.start();
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
@@ -28,7 +28,7 @@ class CrawlerRunner {
         try {
             String[] command = {"pipenv", "run", "python", "allCrawler.py", "-u", name, "-p", pwd};
             ProcessBuilder builder = new ProcessBuilder(command);
-            builder.directory(new File("src\\main\\java\\com\\example\\CourseRecommendation\\utils\\crawler\\python\\"));
+            builder.directory(new File("src\\main\\resources\\python"));
             Process process = builder.start();
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
@@ -46,7 +46,7 @@ class CrawlerRunner {
         try {
             String[] command = {"pipenv", "run", "python", "allCourseInfoCrawler.py", "-u", name, "-p", pwd};
             ProcessBuilder builder = new ProcessBuilder(command);
-            builder.directory(new File("src\\main\\java\\com\\example\\CourseRecommendation\\utils\\crawler\\python"));
+            builder.directory(new File("src\\main\\resources\\python"));
             Process process = builder.start();
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
