@@ -1,4 +1,4 @@
-0:cname的简介如下：content。
+0:cname的简介如下：content
 1:cname课程的类型是category。
 2:有tname老师教cname课程。
 3:tname老师教授以下这些课程：cname。

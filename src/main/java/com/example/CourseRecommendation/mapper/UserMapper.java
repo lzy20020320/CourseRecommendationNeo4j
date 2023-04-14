@@ -21,14 +21,13 @@ public interface UserMapper extends BaseMapper<User> {
     int createUser(@Param("u_id") String u_id, @Param("u_pwd") String u_pwd);
 
 
-    @Select("select u_id, u_student_id, u_nickname, u_college " +
+    @Select("select u_id, u_student_id, u_nickname, u_college,u_url " +
             "from user where u_id=#{u_id}")
     Map<String, Object> selectById(@Param("u_id") String u_id);
 
 
-
-    @Select("select u_id, u_student_id, u_nickname, u_college from user where u_id=#{u_id} and u_pwd = #{u_pwd}")
-    Map<String, Object> selectByIdAndPwd(@Param("u_id") String u_id,@Param("u_pwd") String u_pwd);
+    @Select("select u_id, u_student_id, u_nickname, u_college,u_url from user where u_id=#{u_id} and u_pwd = #{u_pwd}")
+    Map<String, Object> selectByIdAndPwd(@Param("u_id") String u_id, @Param("u_pwd") String u_pwd);
 
     @Update("update user " +
             "set u_student_id = #{student_id} " +
@@ -57,8 +56,14 @@ public interface UserMapper extends BaseMapper<User> {
 
 
     @Update("update user " +
-            "set u_student_id = #{nickname} " +
+            "set u_nickname = #{nickname} " +
             "where u_id=#{u_id}")
     boolean updateNickname(@Param("u_id") String uId,
                            @Param("nickname") String nickName);
+
+    @Update("update user " +
+            "set u_url = #{url} " +
+            "where u_id=#{u_id}")
+    boolean updateAvatar(@Param("u_id") String uId,
+                         @Param("url") String url);
 }

@@ -9,6 +9,7 @@ import com.example.CourseRecommendation.entity.User;
 import com.example.CourseRecommendation.node.Neo4jCourse;
 import com.example.CourseRecommendation.service.CourseService;
 import com.example.CourseRecommendation.service.UserService;
+import com.example.CourseRecommendation.utils.DownloadImg;
 import com.example.CourseRecommendation.utils.HttpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -17,7 +18,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -54,10 +57,21 @@ public class UserController {
 
 
     @GetMapping("/updateAvatar")
-    public boolean updateAvatar(@RequestParam("openid") String u_id) {
-        return userService.updateAvatar(u_id);
+    public void updateAvatar(@RequestParam("openid") String u_id,
+                             @RequestParam("url") String base64) {
+//        InputStream inputStream = HttpUtils.getInputStream(url);
+//        byte[] bytesByStream = HttpUtils.getBytesByStream(inputStream);
+//        final HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.IMAGE_PNG);
+//        return new ResponseEntity<>(bytesByStream, headers, HttpStatus.OK);
+        try {
+            String t = String.valueOf((new Date().getTime()));
+            DownloadImg.saveImageFromBase64(base64, "src\\main\\resources\\static\\img\\avatar\\" + u_id + t + ".jpg");
+            userService.updateAvatar(u_id, u_id + t);
+        } catch (Exception ignore) {
+            System.out.println("error");
+        }
     }
-
 
     @GetMapping("/bindStudent")
     public boolean bindStudentId(@RequestParam("openid") String u_id,
@@ -116,6 +130,13 @@ public class UserController {
         return userService.getFollowUsers(follower_id);
     }
 
+    @GetMapping("/followUser/getNum")
+    public Map<String, Object> getFollowUsersNum(@RequestParam("follower_openid") String follower_id) {
+        Message message = new Message();
+        message.setMessage(userService.getFollowUsersNum(follower_id));
+        return message;
+    }
+
     @GetMapping("/followCourse")
     public boolean followCourse(@RequestParam("followed_course_no") String following_cno,
                                 @RequestParam("follower_openid") String follower_id) {
@@ -133,13 +154,12 @@ public class UserController {
         return userService.getFollowCourses(follower_id);
     }
 
+    @GetMapping("/followCourse/getNum")
+    public Map<String, Object> getFollowCoursesNum(@RequestParam("follower_openid") String follower_id) {
+        Message message = new Message();
+        message.setMessage(userService.getFollowCoursesNum(follower_id));
+        return message;
+    }
 
-//    @GetMapping("/img")    // Test
-//    public ResponseEntity<byte[]> getImg() {
-//        InputStream inputStream = HttpUtils.getInputStream("https://i1.hdslb.com/bfs/face/6313ddfd03395ade78773a2f064ba320cdadb8b3.jpg@120w_120h_1c");
-//        byte[] bytesByStream = HttpUtils.getBytesByStream(inputStream);
-//        final HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.IMAGE_PNG);
-//        return new ResponseEntity<>(bytesByStream, headers, HttpStatus.OK);
-//    }
+
 }

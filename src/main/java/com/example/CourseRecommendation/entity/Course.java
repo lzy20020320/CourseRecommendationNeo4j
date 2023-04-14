@@ -28,13 +28,7 @@ public class Course {
     @TableField("c_target_student")
     private String targetStudent;
 
-
-    public String getUrl(){
-        return MyConfig.ADDR + "/img/courseicon/icon.jpg";
-    }
-
-    public static String getUrl(String c_no){
-        return MyConfig.ADDR + "/img/courseicon/icon.jpg"; //TODO
-    }
+    @TableField("c_url")
+    private String url;
 
 }

@@ -22,4 +22,9 @@ public interface CourseFollowMapper {
             "where course_follow.c_no = course .c_no and u_follower_id = #{u_id}")
     List<Map<String, Object>> selectFollowCoursesByUid(@Param("u_id") String u_id);
 
+
+    @Select("select count(*) " +
+            "from course_follow,course " +
+            "where course_follow.c_no = course .c_no and u_follower_id = #{u_id}")
+    Integer selectFollowCoursesNumByUid(String followerId);
 }

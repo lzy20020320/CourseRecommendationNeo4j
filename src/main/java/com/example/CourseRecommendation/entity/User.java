@@ -21,14 +21,8 @@ public class User {
 
     @TableField("u_college")
     String college;
-    @TableField(exist = false)
-    String url = MyConfig.ADDR + "/img/courseicon/icon.jpg";
 
-    public String getUrl(){
-        return MyConfig.ADDR + "/img/courseicon/icon.jpg";
-    }
+    @TableField("u_url")
+    String url;
 
-    public static String getUrl(String u_id){
-        return MyConfig.ADDR + "/img/courseicon/icon.jpg"; //TODO
-    }
 }

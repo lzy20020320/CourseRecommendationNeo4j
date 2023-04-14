@@ -1,5 +1,6 @@
 package com.example.CourseRecommendation.mapper;
 
+import io.swagger.models.auth.In;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -22,4 +23,10 @@ public interface UserFollowMapper {
             "from user_follow,user " +
             "where user_follow.u_following_id = user.u_id and u_follower_id = #{u_id}")
     List<Map<String, Object>> selectFollowUsersByUid(@Param("u_id") String u_id);
+
+
+    @Select("select count(*)" +
+            "from user_follow,user " +
+            "where user_follow.u_following_id = user.u_id and u_follower_id = #{u_id}")
+    Integer selectFollowUsersNumByUid(@Param("u_id") String u_id);
 }

@@ -45,7 +45,6 @@ public class CourseController {
     public Map<String,Object> getCourseDetail(@RequestParam("course_no") String course_no) {
         Message message = new Message();
         Map<String,Object> data = courseService.selectById(course_no);
-        data.put("url", Course.getUrl(course_no));
         message.setMessage(data);
         return message;
     }

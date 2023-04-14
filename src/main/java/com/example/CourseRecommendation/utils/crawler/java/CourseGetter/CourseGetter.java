@@ -9,7 +9,8 @@ public class CourseGetter {
         CrawlerRunner.PersonalCrawl(name, pwd);
         try {
             TimeUnit.MILLISECONDS.sleep(300);
-        } catch (Exception ignore) {
+        } catch (Exception e) {
+            System.out.println("SLEEP FAIL");
         }
 
         return JsonReader.GetPersonalCourses(name);

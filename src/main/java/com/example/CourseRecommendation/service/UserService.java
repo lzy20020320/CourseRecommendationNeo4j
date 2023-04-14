@@ -1,6 +1,7 @@
 package com.example.CourseRecommendation.service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.CourseRecommendation.config.MyConfig;
 import com.example.CourseRecommendation.controller.message.Message;
 import com.example.CourseRecommendation.dao.CourseRepository;
 import com.example.CourseRecommendation.entity.User;
@@ -111,7 +112,6 @@ public class UserService extends ServiceImpl<UserMapper, User> {
         Message message = new Message();
         userMapper.createWxUser(u_id);
         Map<String, Object> userInfo = userMapper.selectById(u_id);
-        userInfo.put("url", User.getUrl(u_id));
         message.setMessage(userInfo);
         return message;
     }
@@ -123,7 +123,6 @@ public class UserService extends ServiceImpl<UserMapper, User> {
         if (userInfo == null)
             message.setMeta("FAIL", 200);
         else {
-            userInfo.put("url", User.getUrl(u_id));
             message.setMeta("SUCCESS", 200);
             message.setMessage(userInfo);
         }
@@ -142,6 +141,12 @@ public class UserService extends ServiceImpl<UserMapper, User> {
 
     public boolean updateNickname(String u_id, String nickName) {
         return userMapper.updateNickname(u_id, nickName);
+    }
+
+
+    public boolean updateAvatar(String u_id,String url) {
+        String url_temp = MyConfig.ADDR+"/img/avatar/"+url+".jpg";
+        return userMapper.updateAvatar(u_id, url_temp);
     }
 
 
@@ -169,7 +174,13 @@ public class UserService extends ServiceImpl<UserMapper, User> {
         return userFollowMapper.selectFollowUsersByUid(u_id);
     }
 
-    public boolean updateAvatar(String uId) {
-        return false;
+
+    public Integer getFollowUsersNum(String u_id) {
+
+        return userFollowMapper.selectFollowUsersNumByUid(u_id);
+    }
+
+    public Integer getFollowCoursesNum(String followerId) {
+        return courseFollowMapper.selectFollowCoursesNumByUid(followerId);
     }
 }

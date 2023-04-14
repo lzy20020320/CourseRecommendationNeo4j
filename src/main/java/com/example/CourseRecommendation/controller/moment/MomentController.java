@@ -21,12 +21,14 @@ public class MomentController {
     public boolean postMoment(@RequestParam("openid") String openid,
                               @RequestParam("course_no") String c_no,
                               @RequestParam("moment_content") String m_content) {
+
         Moment moment = new Moment();
         moment.setUId(openid);
-        moment.setCNo(c_no);
+        if (!c_no.equals("null"))
+            moment.setCNo(c_no);
         moment.setContent(m_content);
         moment.setRecommended();
-        momentService.updateRelationUser2Course(openid,c_no,moment.isRecommended());
+        momentService.updateRelationUser2Course(openid, c_no, moment.isRecommended());
         return momentService.saveOrUpdate(moment);
     }
 
@@ -41,8 +43,6 @@ public class MomentController {
                                             @RequestParam("page_size") Integer pageSize) {
         Message message = new Message();
         List<Map<String, Object>> myMoments = momentService.getMyMoments(u_id, pageNum, pageSize);
-        for (Map<String, Object> moment : myMoments)
-            moment.put("avatar", User.getUrl(u_id));
         Map<String, Object> data = new HashMap<>();
         data.put("total", momentService.getMyMomentsTotalNum(u_id));
         data.put("moments", myMoments);
@@ -56,8 +56,6 @@ public class MomentController {
                                                 @RequestParam("page_size") Integer pageSize) {
         Message message = new Message();
         List<Map<String, Object>> courseMoments = momentService.getCourseMoments(c_no, pageNum, pageSize);
-        for (Map<String, Object> moment : courseMoments)
-            moment.put("avatar", User.getUrl(moment.get("u_id").toString()));
         Map<String, Object> data = new HashMap<>();
         data.put("total", momentService.getCourseMomentsTotalNum(c_no));
         data.put("moments", courseMoments);
@@ -71,8 +69,6 @@ public class MomentController {
                                                 @RequestParam("page_size") Integer pageSize) {
         Message message = new Message();
         List<Map<String, Object>> followMoments = momentService.getFollowMoments(u_id, pageNum, pageSize);
-        for (Map<String, Object> moment : followMoments)
-            moment.put("avatar",moment.get("u_id").toString());
         Map<String, Object> data = new HashMap<>();
         data.put("total", momentService.getFollowMomentsTotalNum(u_id));
         data.put("moments", followMoments);

@@ -18,9 +18,11 @@ public class QueryController {
     QueryService queryService;
 
     @GetMapping("/answer")
-    public Map<String, Object> answer(@RequestParam("question") String question) {
+    public Map<String, Object> answer(@RequestParam("openid") String u_id,
+                                      @RequestParam("question") String question) {
         Message message = new Message();
         message.setMessage(queryService.answer(question));
+        System.out.println(message);
         return message;
     }
 }
