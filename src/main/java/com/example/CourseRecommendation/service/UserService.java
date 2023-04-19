@@ -12,10 +12,9 @@ import com.example.CourseRecommendation.utils.crawler.java.CourseGetter.CourseGe
 import com.example.CourseRecommendation.utils.crawler.java.CourseGetter.SelectedCourse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class UserService extends ServiceImpl<UserMapper, User> {
@@ -24,6 +23,9 @@ public class UserService extends ServiceImpl<UserMapper, User> {
     UserMapper userMapper;
     @Autowired
     CourseMapper courseMapper;
+
+    @Autowired
+    MomentMapper momentMapper;
     @Autowired
     CourseFollowMapper courseFollowMapper;
 
@@ -33,14 +35,28 @@ public class UserService extends ServiceImpl<UserMapper, User> {
     @Autowired
     CourseRepository courseRepository;
 
+    public String getOpenid(String temporaryId) {
+        RestTemplate template = new RestTemplate();
+        String url = "https://api.weixin.qq.com/sns/jscode2session?appid=wx07d4ba749ffe08ce&secret=3a51553e895d1a87d69f3d4e766daade&js_code={code}&grant_type=authorization_code";
+
+        Map<String, Object> paramMap = new HashMap<String, Object>();
+        paramMap.put("code", temporaryId);
+
+        String result = template.getForObject(url, String.class, paramMap);
+        System.out.println(result);
+        return result;
+    }
+
 
     public boolean bindStudentId(String student_id, String user_id) {
         return userMapper.updateStudentId(student_id, user_id);
     }
 
 
-    public boolean insertAllLessonPlan(String u_id, String student_id, String student_pwd) {
+    public String insertAllLessonPlan(String u_id, String student_id, String student_pwd) {
         List<SelectedCourse> selectedCourses = CourseGetter.UpdatePersonalCourses(student_id, student_pwd);
+        if (selectedCourses.size() == 0) return "未认证";
+        userMapper.updateAuthenticated(u_id, "已认证");
         for (SelectedCourse selectedCourse : selectedCourses) {
             if (courseMapper.updateCourse(selectedCourse.getCourseId(),
                     selectedCourse.getCourseName(), selectedCourse.getCredits()) > 0) {
@@ -58,7 +74,7 @@ public class UserService extends ServiceImpl<UserMapper, User> {
             userMapper.insertLessonPlan(student_id, selectedCourse.getCourseId(),
                     selectedCourse.getCourseKind(), selectedCourse.getSemester(), selectedCourse.isSelect());
         }
-        return true;
+        return "已认证";
     }
 
 
@@ -71,34 +87,35 @@ public class UserService extends ServiceImpl<UserMapper, User> {
     }
 
     public List<Neo4jCourse> getRecommendedCourses(String studentId) {
-        int min_len = 100;
+        int min_len = 6;
         List<Neo4jCourse> recommendedCourses = new ArrayList<>();
         List<String> courseNames = new ArrayList<>();
         List<Neo4jCourse> recommendedCourseByRecommendation = courseRepository.getRecommendedCourseByRecommendation(studentId);
 
-        for (Neo4jCourse course : recommendedCourseByRecommendation) {
-            course.setUrl();
-            recommendedCourses.add(course);
-            courseNames.add(course.getName());
-        }
-
-        if (recommendedCourses.size() < min_len) {
-            List<Neo4jCourse> recommendedCourseBySelection = courseRepository.getRecommendedCourseBySelection(studentId);
-            for (Neo4jCourse course : recommendedCourseBySelection) {
-                if (!courseNames.contains(course.getName())) {
-                    course.setUrl();
-                    recommendedCourses.add(course);
-                    courseNames.add(course.getName());
-                }
-            }
-        }
+//        for (Neo4jCourse course : recommendedCourseByRecommendation) {
+//            course.setUrl();
+//            recommendedCourses.add(course);
+//            courseNames.add(course.getName());
+//        }
+//
+//        if (recommendedCourses.size() < min_len) {
+//            List<Neo4jCourse> recommendedCourseBySelection = courseRepository.getRecommendedCourseBySelection(studentId);
+//            for (Neo4jCourse course : recommendedCourseBySelection) {
+//                if (!courseNames.contains(course.getName()) && recommendedCourses.size() < min_len) {
+//                    course.setUrl();
+//                    recommendedCourses.add(course);
+//                    courseNames.add(course.getName());
+//                }
+//            }
+//        }
 
         if (recommendedCourses.size() < min_len) {
             List<Map<String, Object>> courses = courseMapper.recommendByCategory(studentId);
             for (Map<String, Object> course : courses) {
                 Neo4jCourse neo4jCourse = Neo4jCourse.Map2Neo4jCourse(course);
-                if (!courseNames.contains(neo4jCourse.getName())) {
-                    neo4jCourse.setUrl();
+                if (!courseNames.contains(neo4jCourse.getName()) && recommendedCourses.size() < min_len) {
+
+
                     recommendedCourses.add(neo4jCourse);
                     courseNames.add(neo4jCourse.getName());
                 }
@@ -112,6 +129,9 @@ public class UserService extends ServiceImpl<UserMapper, User> {
         Message message = new Message();
         userMapper.createWxUser(u_id);
         Map<String, Object> userInfo = userMapper.selectById(u_id);
+        userInfo.put("moment_num", momentMapper.selectMyMomentTotalNum(u_id));
+        userInfo.put("course_num", userMapper.selectSelectedLessonPlanNumByUid(u_id));
+        userInfo.put("follow_num", courseFollowMapper.selectFollowCoursesNumByUid(u_id));
         message.setMessage(userInfo);
         return message;
     }
@@ -123,11 +143,15 @@ public class UserService extends ServiceImpl<UserMapper, User> {
         if (userInfo == null)
             message.setMeta("FAIL", 200);
         else {
+            userInfo.put("moment_num", momentMapper.selectMyMomentTotalNum(u_id));
+            userInfo.put("course_num", userMapper.selectSelectedLessonPlanNumByUid(u_id));
+            userInfo.put("follow_num", courseFollowMapper.selectFollowCoursesNumByUid(u_id));
             message.setMeta("SUCCESS", 200);
             message.setMessage(userInfo);
         }
         return message;
     }
+
 
     public Map<String, Object> sign(String u_id, String u_pwd) {
         Message message = new Message();
@@ -144,8 +168,38 @@ public class UserService extends ServiceImpl<UserMapper, User> {
     }
 
 
-    public boolean updateAvatar(String u_id,String url) {
-        String url_temp = MyConfig.ADDR+"/img/avatar/"+url+".jpg";
+    public boolean updateBirthday(String u_id, String birthday) {
+        return userMapper.updateBirthday(u_id, birthday);
+    }
+
+    public boolean updateSchool(String u_id, String school) {
+        return userMapper.updateSchool(u_id, school);
+    }
+
+
+    public boolean updateEmail(String u_id, String email) {
+        return userMapper.updateEmail(u_id, email);
+    }
+
+    public boolean updateHobby(String u_id, String hobby) {
+        return userMapper.updateHobby(u_id, hobby);
+    }
+
+    public boolean updateSignature(String u_id, String signature) {
+        return userMapper.updateSignature(u_id, signature);
+    }
+
+    public boolean updateGender(String u_id, int gender) {
+        return userMapper.updateGender(u_id, gender);
+    }
+
+    public boolean updateMajor(String u_id, int major) {
+        return userMapper.updateMajor(u_id, major);
+    }
+
+
+    public boolean updateAvatar(String u_id, String url) {
+        String url_temp = MyConfig.ADDR + "/img/avatar/" + url + ".jpg";
         return userMapper.updateAvatar(u_id, url_temp);
     }
 
@@ -159,26 +213,32 @@ public class UserService extends ServiceImpl<UserMapper, User> {
     }
 
     public List<Map<String, Object>> getFollowCourses(String u_id) {
-        return courseFollowMapper.selectFollowCoursesByUid(u_id);
+        List<Map<String, Object>> courses = courseFollowMapper.selectFollowCoursesByUid(u_id);
+        for (Map<String, Object> course : courses)
+            if (Objects.equals(course.get("c_url").toString(), "0"))
+                course.put("c_url","https://p.ananas.chaoxing.com/star3/270_169c/6ce77a10dd3268daa7ba6c93e5e76459.jpg");
+        return courses;
     }
 
     public boolean followUser(String following, String follower) {
+        System.out.println("testfollow");
         return userFollowMapper.insertFollowUser(following, follower);
     }
 
-    public boolean deleteFollowUser(String following, String follower) {
-        return userFollowMapper.deleteFollowUser(following, follower);
-    }
 
-    public List<Map<String, Object>> getFollowUsers(String u_id) {
-        return userFollowMapper.selectFollowUsersByUid(u_id);
-    }
-
-
-    public Integer getFollowUsersNum(String u_id) {
-
-        return userFollowMapper.selectFollowUsersNumByUid(u_id);
-    }
+//    public boolean deleteFollowUser(String following, String follower) {
+//        return userFollowMapper.deleteFollowUser(following, follower);
+//    }
+//
+//    public List<Map<String, Object>> getFollowUsers(String u_id) {
+//        return userFollowMapper.selectFollowUsersByUid(u_id);
+//    }
+//
+//
+//    public Integer getFollowUsersNum(String u_id) {
+//
+//        return userFollowMapper.selectFollowUsersNumByUid(u_id);
+//    }
 
     public Integer getFollowCoursesNum(String followerId) {
         return courseFollowMapper.selectFollowCoursesNumByUid(followerId);

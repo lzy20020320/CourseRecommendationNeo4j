@@ -5,8 +5,10 @@ import com.example.CourseRecommendation.utils.QClassifier;
 import com.hankcs.hanlp.seg.common.Term;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.example.CourseRecommendation.utils.QClassifier.*;
 
@@ -17,17 +19,35 @@ public class QueryService {
     @Autowired
     QueryRepository queryRepository;
 
-    public String answer(String sentence) {
+    public String answer(String u_id, String sentence) {
         List<Term> terms = sentenceSegment(sentence);
         String answer = "";
         System.out.println(terms);
         int question_label = -1;
         try {
             question_label = (int) classify(terms);
-            answer = QClassifier.answers.get(question_label);
             System.out.println(question_label);
         } catch (Exception ignore) {
         }
+
+        if (userList.containsKey(u_id)) {
+            question_label = userList.get(u_id);
+            userList.remove(u_id);
+            System.out.println("containsKey\n");
+        } else {
+            String fuzzyCourseName = isFuzzyCourseName(u_id, terms, question_label);
+            if (!Objects.equals(fuzzyCourseName, "")) {
+                answer = "请问您是指以下课程中的哪个？\n";
+                List<String> courses = queryRepository.getFuzzyCourse(fuzzyCourseName);
+                for (String courseName : courses)
+                    answer = answer + courseName + ',';
+                answer = answer + "请输入准确的课程名。";
+                return answer;
+            }
+        }
+
+
+        answer = QClassifier.answers.get(question_label);
         switch (question_label) {
             case 0: {
                 String brief = "";

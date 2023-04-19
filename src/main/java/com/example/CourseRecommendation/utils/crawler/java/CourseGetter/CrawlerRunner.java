@@ -1,14 +1,16 @@
 package com.example.CourseRecommendation.utils.crawler.java.CourseGetter;
 
+import com.example.CourseRecommendation.config.MyConfig;
+
 import java.io.*;
 
-class CrawlerRunner {
+public class CrawlerRunner {
 
     public static void PersonalCrawl(String name, String pwd) {
         try {
             String[] command = {"pipenv", "run", "python", "personalCrawler.py", "-u", name, "-p", pwd};
             ProcessBuilder builder = new ProcessBuilder(command);
-            builder.directory(new File("src\\main\\resources\\python"));
+            builder.directory(new File(MyConfig.RESOURCE_PATH+"python"));
             Process process = builder.start();
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
@@ -28,7 +30,7 @@ class CrawlerRunner {
         try {
             String[] command = {"pipenv", "run", "python", "allCrawler.py", "-u", name, "-p", pwd};
             ProcessBuilder builder = new ProcessBuilder(command);
-            builder.directory(new File("src\\main\\resources\\python"));
+            builder.directory(new File(MyConfig.RESOURCE_PATH+"python"));
             Process process = builder.start();
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
@@ -46,7 +48,7 @@ class CrawlerRunner {
         try {
             String[] command = {"pipenv", "run", "python", "allCourseInfoCrawler.py", "-u", name, "-p", pwd};
             ProcessBuilder builder = new ProcessBuilder(command);
-            builder.directory(new File("src\\main\\resources\\python"));
+            builder.directory(new File(MyConfig.RESOURCE_PATH+"python"));
             Process process = builder.start();
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;

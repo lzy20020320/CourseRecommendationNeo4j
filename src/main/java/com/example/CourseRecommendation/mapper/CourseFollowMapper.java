@@ -27,4 +27,8 @@ public interface CourseFollowMapper {
             "from course_follow,course " +
             "where course_follow.c_no = course .c_no and u_follower_id = #{u_id}")
     Integer selectFollowCoursesNumByUid(String followerId);
+
+    @Select("select count(*) from course_follow where c_no = #{c_no} and u_follower_id = #{u_id}")
+    int isFollowed(@Param("u_id") String u_id,
+                   @Param("c_no") String c_no);
 }

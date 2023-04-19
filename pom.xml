@@ -103,6 +103,8 @@
         <dependency>
             <groupId>com.hankcs</groupId>
             <artifactId>hanlp</artifactId>
+            <version>1.7.6</version>
+            <scope>system</scope>
             <systemPath>${basedir}/src/main/resources/lib/hanlp-portable-1.7.6.jar</systemPath>
         </dependency>
 
@@ -129,6 +131,16 @@
                 </configuration>
             </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/**</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
     </build>
+
 
 </project>

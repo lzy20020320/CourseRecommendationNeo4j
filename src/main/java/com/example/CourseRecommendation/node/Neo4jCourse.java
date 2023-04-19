@@ -1,7 +1,6 @@
 package com.example.CourseRecommendation.node;
 
 import com.example.CourseRecommendation.config.MyConfig;
-import com.example.CourseRecommendation.entity.Course;
 import lombok.Data;
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
@@ -57,10 +56,10 @@ public class Neo4jCourse {
     @Property("target_student")
     private String targetStudent;
 
-    private String url = MyConfig.ADDR + "/img/courseicon/icon.jpg";
+    private String url = MyConfig.ADDR + "img/courseicon/icon.jpg";
 
     public void setUrl(){
-        url = MyConfig.ADDR + "/img/courseicon/icon.jpg";
+        url = MyConfig.ADDR + "img/courseicon/icon.jpg";
     }
 
     public static Neo4jCourse Map2Neo4jCourse(Map<String, Object> course) {
@@ -81,6 +80,7 @@ public class Neo4jCourse {
             neo4jCourse.prerequisite = course.get("c_prerequisite").toString();
         if (course.get("c_target_student") != null)
             neo4jCourse.targetStudent = course.get("c_target_student").toString();
+        neo4jCourse.url = course.get("c_url").toString();
         return neo4jCourse;
     }
 }

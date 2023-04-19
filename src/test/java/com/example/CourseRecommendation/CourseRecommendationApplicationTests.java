@@ -5,8 +5,13 @@ import com.example.CourseRecommendation.utils.QClassifier;
 import com.hankcs.hanlp.HanLP;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.example.CourseRecommendation.utils.crawler.java.CourseGetter.CrawlerRunner.PersonalCrawl;
 
 @SpringBootTest
 class CourseRecommendationApplicationTests {
@@ -14,7 +19,6 @@ class CourseRecommendationApplicationTests {
     @Test
     void contextLoads() throws OrtException {
 //        System.out.println(HanLP.("王玉超老师上哪些课？"));;
-        System.out.println(new Date().getTime());
     }
 
 }

@@ -30,6 +30,16 @@ public interface CourseMapper extends BaseMapper<Course> {
     @Select("select * from course where c_no = #{no} ")
     Map<String,Object> selectByNo(@Param("no") String no);
 
+
+    @Select("select moment.c_no, c_name,COUNT(m_recommended) as r_num " +
+            "from course,moment " +
+            "where m_recommended = 1 and " +
+            "      course.c_no = moment.c_no " +
+            "group by moment.c_no, c_name " +
+            "order by r_num desc " +
+            "limit 30")
+    List<Map<String,Object>> selectHotCourse();
+
     @Select("select c_no ," +
             "            c_name," +
             "            c_credit," +
@@ -38,7 +48,8 @@ public interface CourseMapper extends BaseMapper<Course> {
             "            c_content," +
             "            c_reference," +
             "            c_prerequisite," +
-            "            c_target_student" +
+            "            c_target_student," +
+            "            c_url" +
             "                    from (select course.c_no," +
             "                            c_name," +
             "                            c_credit," +
@@ -48,6 +59,7 @@ public interface CourseMapper extends BaseMapper<Course> {
             "                            c_reference," +
             "                            c_prerequisite," +
             "                            c_target_student," +
+            "                            c_url," +
             "                            count(m_recommended) as r_num" +
             "                            from moment," +
             "                            course" +

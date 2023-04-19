@@ -67,6 +67,7 @@ public class MomentController {
     public Map<String, Object> getFollowMoments(@RequestParam("openid") String u_id,
                                                 @RequestParam("page_num") Integer pageNum,
                                                 @RequestParam("page_size") Integer pageSize) {
+        System.out.println("search");
         Message message = new Message();
         List<Map<String, Object>> followMoments = momentService.getFollowMoments(u_id, pageNum, pageSize);
         Map<String, Object> data = new HashMap<>();

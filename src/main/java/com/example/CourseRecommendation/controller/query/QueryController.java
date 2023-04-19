@@ -21,7 +21,7 @@ public class QueryController {
     public Map<String, Object> answer(@RequestParam("openid") String u_id,
                                       @RequestParam("question") String question) {
         Message message = new Message();
-        message.setMessage(queryService.answer(question));
+        message.setMessage(queryService.answer(u_id,question));
         System.out.println(message);
         return message;
     }

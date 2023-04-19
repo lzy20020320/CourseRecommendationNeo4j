@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 @RestController
 @RequestMapping("/course")
@@ -42,10 +43,29 @@ public class CourseController {
     }
 
     @GetMapping("/detail")
-    public Map<String,Object> getCourseDetail(@RequestParam("course_no") String course_no) {
+    public Map<String, Object> getCourseDetail(@RequestParam("openid") String openid,
+                                               @RequestParam("course_no") String course_no) {
         Message message = new Message();
-        Map<String,Object> data = courseService.selectById(course_no);
+        Map<String, Object> data = courseService.selectById(course_no);
+        data.put("followed",courseService.isFollowed(course_no,openid));
         message.setMessage(data);
+        return message;
+    }
+
+    @GetMapping("/random")
+    public Map<String, Object> getRandomCourse() {
+        Message message = new Message();
+        Random rand = new Random();
+        List<Map<String, Object>> hotCourses = courseService.selectHotCourse();
+        Map<String, Object> randomCourse = hotCourses.get(rand.nextInt(hotCourses.size()));
+        message.setMessage(randomCourse.get("c_no"));
+        return message;
+    }
+
+    @GetMapping("/hot")
+    public Map<String, Object> getHotCourse() {
+        Message message = new Message();
+        message.setMessage(courseService.selectHotCourse());
         return message;
     }
 

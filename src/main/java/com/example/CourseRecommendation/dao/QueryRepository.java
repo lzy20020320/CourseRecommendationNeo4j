@@ -11,6 +11,10 @@ public interface QueryRepository extends Neo4jRepository<Neo4jCourse, Long> {
     @Query("MATCH(n:course) WHERE n.name =~('.*' + $cname + '.*') RETURN n.aim LIMIT 1")
     String getCourseDetail(@Param(value = "cname") String cname);
 
+
+    @Query("MATCH(n:course) WHERE n.name =~('.*' + $cname + '.*') RETURN n.name")
+    List<String> getFuzzyCourse(@Param(value = "cname") String cname);
+
     @Query("match (n:teacher{name: $tname})-[r:TEACHES]->(c:course) return c.name")
     List<String> getCourseNameByTName(@Param(value = "tname") String tname);
 

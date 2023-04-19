@@ -1,5 +1,6 @@
 package com.example.CourseRecommendation.utils.crawler.java.CourseGetter;
 
+import com.example.CourseRecommendation.config.MyConfig;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -15,7 +16,7 @@ class JsonReader {
         JSONParser parser = new JSONParser();
         List<SelectedCourse> cours = new ArrayList<>();
         try {
-            FileReader fileReader = new FileReader("src\\main\\resources\\python\\interval-crawler-task-result\\terms\\" + name + ".json");
+            FileReader fileReader = new FileReader(MyConfig.RESOURCE_PATH+"python\\interval-crawler-task-result\\terms\\" + name + ".json");
             Object obj = parser.parse(fileReader);
             JSONObject jsonObject = (JSONObject) obj;
             JSONArray coursesArray = (JSONArray) jsonObject.get("cours");
@@ -42,7 +43,7 @@ class JsonReader {
         JSONParser parser = new JSONParser();
         List<CourseRaw> cours = new ArrayList<>();
         try {
-            FileReader fileReader = new FileReader("src\\main\\resources\\python\\interval-crawler-task-result\\terms\\" + "21001" + ".json");
+            FileReader fileReader = new FileReader(MyConfig.RESOURCE_PATH+"python\\interval-crawler-task-result\\terms\\" + "21001" + ".json");
             Object obj = parser.parse(fileReader);
             JSONObject jsonObject = (JSONObject) obj;
             JSONArray coursesArray = (JSONArray) jsonObject.get("cours");
@@ -80,7 +81,7 @@ class JsonReader {
         JSONParser parser = new JSONParser();
         CourseInfo courseInfo = new CourseInfo();
         try {
-            FileReader fileReader = new FileReader("src\\main\\resources\\python\\interval-crawler-task-result\\courseInfo\\" + course_no + ".json");
+            FileReader fileReader = new FileReader(MyConfig.RESOURCE_PATH+"python\\interval-crawler-task-result\\courseInfo\\" + course_no + ".json");
             Object obj = parser.parse(fileReader);
             JSONObject jsonObject = (JSONObject) obj;
             Object courseObj = jsonObject.get("courseInfo");

@@ -4,6 +4,7 @@ import ai.onnxruntime.OnnxTensor;
 import ai.onnxruntime.OrtEnvironment;
 import ai.onnxruntime.OrtException;
 import ai.onnxruntime.OrtSession;
+import com.example.CourseRecommendation.config.MyConfig;
 import com.hankcs.hanlp.HanLP;
 import com.hankcs.hanlp.seg.Segment;
 import com.hankcs.hanlp.seg.common.Term;
@@ -20,13 +21,15 @@ public class QClassifier {
 
     public final static List<String> answers = initAnswers();
 
+    public static Map<String,Integer> userList = new HashMap<>();
+
 
     static public long classify(List<Term> seg) throws OrtException {
         String abstraction = abstractSentence(seg);
         List<Term> abstractSeg = sentenceSegment(abstraction);
         float[] vector = sentence2Vector(abstractSeg);
         OrtEnvironment env = OrtEnvironment.getEnvironment();
-        OrtSession session = env.createSession("src/main/resources/onnx/QClassifier.onnx", new OrtSession.SessionOptions());
+        OrtSession session = env.createSession(MyConfig.RESOURCE_PATH+"onnx/QClassifier.onnx", new OrtSession.SessionOptions());
         float[][] inputs = new float[][]{vector};
 
         OnnxTensor inputTensor = OnnxTensor.createTensor(env, inputs);
@@ -57,7 +60,8 @@ public class QClassifier {
     private static String abstractSentence(List<Term> seg) {
         String abstraction = "";
         for (Term term : seg) {
-            if (Objects.equals(term.nature.toString(), "nm"))
+            if (Objects.equals(term.nature.toString(), "nm")
+                    || Objects.equals(term.nature.toString(), "nz"))
                 abstraction = abstraction + "nm";
             else if (Objects.equals(term.nature.toString(), "nr"))
                 abstraction = abstraction + "nnt";
@@ -83,7 +87,7 @@ public class QClassifier {
     private static List<String> initVocabulary() {
         List<String> wordsList = new ArrayList<>();
 
-        try (BufferedReader br = new BufferedReader(new FileReader("src/main/resources/txt/vocabulary.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(MyConfig.RESOURCE_PATH+"txt/vocabulary.txt"))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] words = line.split(":");
@@ -97,7 +101,7 @@ public class QClassifier {
 
     private static List<String> initAnswers() {
         List<String> answersList = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader("src/main/resources/txt/answer.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(MyConfig.RESOURCE_PATH+"txt/answer.txt"))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] words = line.split(":");
@@ -111,7 +115,7 @@ public class QClassifier {
 
     // 0:cname的简介如下：content。
     public static String getAnswer0(String cname, String brief) {
-        if (brief == null || brief.length() == 0 || cname.length() == 0 )
+        if (brief == null || brief.length() == 0 || cname.length() == 0)
             return "抱歉，暂无该课程的简介。";
         String answer = answers.get(0);
         answer = answer.replace("cname", cname);
@@ -123,7 +127,7 @@ public class QClassifier {
 
     // 1:cname课程的类型是category。
     public static String getAnswer1(String cname, String category) {
-        if (category == null || category.length() == 0|| cname.length() == 0)
+        if (category == null || category.length() == 0 || cname.length() == 0)
             return "抱歉，未查询到该课程的类型。";
         String answer = answers.get(1);
         answer = answer.replace("cname", cname);
@@ -135,7 +139,7 @@ public class QClassifier {
 
     // 2:有tname老师教cname课程。
     public static String getAnswer2(String cname, List<String> tname_list) {
-        if (tname_list == null || tname_list.size() == 0|| cname.length() == 0)
+        if (tname_list == null || tname_list.size() == 0 || cname.length() == 0)
             return "抱歉，未查询到教授该课程的教师。";
         String answer = answers.get(2);
         String tnames = "";
@@ -153,7 +157,7 @@ public class QClassifier {
 
     // 3:tname老师教授以下这些课程：cname。
     public static String getAnswer3(String tname, List<String> cname_list) {
-        if (cname_list == null || cname_list.size() == 0|| tname.length() == 0)
+        if (cname_list == null || cname_list.size() == 0 || tname.length() == 0)
             return "抱歉，未查询到该教师教授的课程。";
         String answer = answers.get(3);
         String cnames = "";
@@ -172,7 +176,7 @@ public class QClassifier {
 
     // 4:tname老师教授以下这些类型的课程：category。
     public static String getAnswer4(String tname, List<String> category_list) {
-        if (category_list == null || category_list.size() == 0|| tname.length() == 0)
+        if (category_list == null || category_list.size() == 0 || tname.length() == 0)
             return "抱歉，未查询到该教师教授的课程类别。";
         String categorys = "";
         for (String category : category_list) {
@@ -209,6 +213,15 @@ public class QClassifier {
         for (Term term : terms)
             if (Objects.equals(term.nature.toString(), "nm"))
                 return term.word;
+        return "";
+    }
+
+    public static String isFuzzyCourseName(String u_id,List<Term> terms,int QLabel){
+        for (Term term : terms)
+            if (Objects.equals(term.nature.toString(), "nz")){
+                userList.put(u_id,QLabel);
+                return term.word;
+            }
         return "";
     }
 

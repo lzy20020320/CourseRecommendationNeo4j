@@ -19,10 +19,33 @@ public class User {
     @TableField("u_nickname")
     String nickname;
 
-    @TableField("u_college")
-    String college;
+    @TableField("u_gender")
+    Integer gender;
+
+
+    @TableField("u_hobby")
+    String hobby;
+
+    @TableField("u_birthday")
+    String birthday;
+
+    @TableField("u_email")
+    String email;
 
     @TableField("u_url")
     String url;
+
+    @TableField("u_major")
+    Integer major;
+
+    @TableField("u_school")
+    String school;
+
+    @TableField("u_signature")
+    String signature;
+
+    @TableField("u_authenticated")
+    String authenticated;
+
 
 }
