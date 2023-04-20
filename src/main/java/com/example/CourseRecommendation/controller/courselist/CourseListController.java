@@ -21,9 +21,9 @@ public class CourseListController {
     @GetMapping("/categories")
     public Map<String, Object> getCategories(){
         CourseListMessage courseListMessage = new CourseListMessage();
-        List<Course> courses = courseService.selectAll();
-        for (Course course :courses)
-            courseListMessage.addCourse(course.getName(),course.getCategory(),course.getNo(), course.getUrl());
+        List<Map<String, Object>> courses = courseService.selectAll();
+        for (Map<String, Object> course :courses)
+            courseListMessage.addCourse(course.get("c_name").toString(),course.get("c_category").toString(),course.get("c_no").toString(), course.get("c_th_url").toString());
         return courseListMessage;
     }
 }

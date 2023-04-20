@@ -18,10 +18,10 @@ public class SwiperDataMap extends HashMap<String, Object> {
 
     public static List<SwiperDataMap> SwiperDataMapList() {
         List<String> srcList = Arrays.asList(
-                MyConfig.ADDR + "/img/banner/banner1.png",
-                MyConfig.ADDR + "/img/banner/banner2.png",
-                MyConfig.ADDR + "/img/banner/banner3.png",
-                MyConfig.ADDR + "/img/banner/banner4.png");
+                "https://i.328888.xyz/2023/04/20/iGicIA.md.jpeg",
+                "https://i.328888.xyz/2023/04/20/iGicIA.md.jpeg",
+                "https://i.328888.xyz/2023/04/20/iGicIA.md.jpeg",
+                "https://i.328888.xyz/2023/04/20/iGicIA.md.jpeg");
 
         List<String> noList = Arrays.asList(
                 "00816394",

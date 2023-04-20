@@ -38,7 +38,7 @@ public class MomentController {
     }
 
     @GetMapping("/my")
-    public Map<String, Object> getMyMoments(@RequestParam("student_id") String u_id,
+    public Map<String, Object> getMyMoments(@RequestParam("openid") String u_id,
                                             @RequestParam("page_num") Integer pageNum,
                                             @RequestParam("page_size") Integer pageSize) {
         Message message = new Message();

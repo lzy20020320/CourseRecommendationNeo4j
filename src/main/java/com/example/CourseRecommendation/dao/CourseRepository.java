@@ -19,10 +19,11 @@ public interface CourseRepository extends Neo4jRepository<Neo4jCourse, Long> {
 //    @Query("match(:course{no: $cno})-[r:BELONGS_TO]->(c:category) return c.name")
 //    String getCategoryByCno(@Param("cno") String cno);
 //
-    @Query("create (:course{no: $no,name:$name,credit:$credit})")
+    @Query("create (:course{no: $no,name:$name,credit:$credit,aim:'暂无简介',c_category:$category,c_url:'0',prerequisite:'无',reference:'暂无参考教材',target_student:'全体学生',content:'暂无简介'})")
     void createCourse(@Param(value = "no") String courseId,
                       @Param(value = "name") String courseName,
-                      @Param(value = "credit") String credits);
+                      @Param(value = "credit") String credits,
+                      @Param(value = "$category") String $category);
 
     //
     @Query("match (co:course),(ca:category) where co.no=$no and ca.name=$name create (co)-[:BELONGS_TO]->(ca)")

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.CourseRecommendation.config.MyConfig;
 import com.example.CourseRecommendation.controller.message.Message;
 import com.example.CourseRecommendation.dao.CourseRepository;
+import com.example.CourseRecommendation.entity.Course;
 import com.example.CourseRecommendation.entity.User;
 import com.example.CourseRecommendation.mapper.*;
 import com.example.CourseRecommendation.node.Neo4jCourse;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
+
+import static com.example.CourseRecommendation.config.MyConfig.COURSE_DEFAULT_URL;
 
 @Service
 public class UserService extends ServiceImpl<UserMapper, User> {
@@ -65,7 +68,7 @@ public class UserService extends ServiceImpl<UserMapper, User> {
                     courseMapper.updateCourseCategory(selectedCourse.getCourseId(), category);
                     // 更新neo4j
                     courseRepository.createCourse(selectedCourse.getCourseId(),
-                            selectedCourse.getCourseName(), Float.toString(selectedCourse.getCredits()));
+                            selectedCourse.getCourseName(), Float.toString(selectedCourse.getCredits()),category);
                     courseRepository.classifyCourse(selectedCourse.getCourseId(), category);
                 } catch (Exception ignored) {
                 }
@@ -79,10 +82,14 @@ public class UserService extends ServiceImpl<UserMapper, User> {
 
 
     public List<Map<String, Object>> getLessonPlan(String student_id) {
+        //        for (Map<String, Object> course : courses)
+//            Course.setUrl(course);
         return userMapper.selectLessonPlanBySid(student_id);
     }
 
     public List<Map<String, Object>> getSelectedLesson(String student_id) {
+        //        for (Map<String, Object> course : courses)
+//            Course.setUrl(course);
         return userMapper.selectSelectedLessonPlanBySid(student_id);
     }
 
@@ -91,31 +98,31 @@ public class UserService extends ServiceImpl<UserMapper, User> {
         List<Neo4jCourse> recommendedCourses = new ArrayList<>();
         List<String> courseNames = new ArrayList<>();
         List<Neo4jCourse> recommendedCourseByRecommendation = courseRepository.getRecommendedCourseByRecommendation(studentId);
+        for (Neo4jCourse course : recommendedCourseByRecommendation) {
+            if (recommendedCourses.size() < min_len){
+//                course.setUrl();
+                recommendedCourses.add(course);
+                courseNames.add(course.getName());
+            }
+        }
 
-//        for (Neo4jCourse course : recommendedCourseByRecommendation) {
-//            course.setUrl();
-//            recommendedCourses.add(course);
-//            courseNames.add(course.getName());
-//        }
-//
-//        if (recommendedCourses.size() < min_len) {
-//            List<Neo4jCourse> recommendedCourseBySelection = courseRepository.getRecommendedCourseBySelection(studentId);
-//            for (Neo4jCourse course : recommendedCourseBySelection) {
-//                if (!courseNames.contains(course.getName()) && recommendedCourses.size() < min_len) {
+        if (recommendedCourses.size() < min_len) {
+            List<Neo4jCourse> recommendedCourseBySelection = courseRepository.getRecommendedCourseBySelection(studentId);
+            for (Neo4jCourse course : recommendedCourseBySelection) {
+                if (!courseNames.contains(course.getName()) && recommendedCourses.size() < min_len) {
 //                    course.setUrl();
-//                    recommendedCourses.add(course);
-//                    courseNames.add(course.getName());
-//                }
-//            }
-//        }
+                    recommendedCourses.add(course);
+                    courseNames.add(course.getName());
+                }
+            }
+        }
 
         if (recommendedCourses.size() < min_len) {
             List<Map<String, Object>> courses = courseMapper.recommendByCategory(studentId);
             for (Map<String, Object> course : courses) {
                 Neo4jCourse neo4jCourse = Neo4jCourse.Map2Neo4jCourse(course);
                 if (!courseNames.contains(neo4jCourse.getName()) && recommendedCourses.size() < min_len) {
-
-
+//                    neo4jCourse.setUrl();
                     recommendedCourses.add(neo4jCourse);
                     courseNames.add(neo4jCourse.getName());
                 }
@@ -213,15 +220,12 @@ public class UserService extends ServiceImpl<UserMapper, User> {
     }
 
     public List<Map<String, Object>> getFollowCourses(String u_id) {
-        List<Map<String, Object>> courses = courseFollowMapper.selectFollowCoursesByUid(u_id);
-        for (Map<String, Object> course : courses)
-            if (Objects.equals(course.get("c_url").toString(), "0"))
-                course.put("c_url","https://p.ananas.chaoxing.com/star3/270_169c/6ce77a10dd3268daa7ba6c93e5e76459.jpg");
-        return courses;
+        //        for (Map<String, Object> course : courses)
+//            Course.setUrl(course);
+        return courseFollowMapper.selectFollowCoursesByUid(u_id);
     }
 
     public boolean followUser(String following, String follower) {
-        System.out.println("testfollow");
         return userFollowMapper.insertFollowUser(following, follower);
     }
 

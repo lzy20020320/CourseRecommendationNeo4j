@@ -2,6 +2,7 @@ package com.example.CourseRecommendation.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.CourseRecommendation.config.MyConfig;
 import com.example.CourseRecommendation.entity.Course;
 import com.example.CourseRecommendation.mapper.CourseFollowMapper;
 import com.example.CourseRecommendation.mapper.CourseMapper;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class CourseService extends ServiceImpl<CourseMapper, Course> {
@@ -24,16 +26,22 @@ public class CourseService extends ServiceImpl<CourseMapper, Course> {
     public List<Course> find(String course_name) {
         QueryWrapper<Course> wrapper = new QueryWrapper<>();
         wrapper.like("c_name", course_name);
+        //        for (Course course : courses)
+//            course.setUrl();
         return courseMapper.selectList(wrapper);
     }
 
-    public List<Course> selectAll() {
-        return courseMapper.selectList(null);
+    public List<Map<String,Object>> selectAll() {
+        //        for (Map<String,Object> course : courses)
+//            Course.setUrl(course);
+        return courseMapper.selectAll();
     }
 
     public List<Course> selectByCategory(String category) {
         QueryWrapper<Course> wrapper = new QueryWrapper<>();
         wrapper.eq("c_category", category);
+        //        for (Course course : courses)
+//            course.setUrl();
         return courseMapper.selectList(wrapper);
     }
 
@@ -48,10 +56,13 @@ public class CourseService extends ServiceImpl<CourseMapper, Course> {
 //    }
 
     public List<Map<String, Object>> selectHotCourse() {
+        //        for (Map<String, Object> course : courses)
+//            Course.setUrl(course);
         return courseMapper.selectHotCourse();
     }
 
     public Map<String, Object> selectById(String no) {
+        //        Course.setUrl(course);
         return courseMapper.selectByNo(no);
     }
 
