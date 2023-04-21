@@ -9,7 +9,6 @@ import lombok.Data;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.example.CourseRecommendation.config.MyConfig.COURSE_DEFAULT_URL;
 
 @Data
 @TableName("course")

@@ -9,15 +9,18 @@ import com.example.CourseRecommendation.entity.User;
 import com.example.CourseRecommendation.mapper.*;
 import com.example.CourseRecommendation.node.Neo4jCourse;
 import com.example.CourseRecommendation.utils.CourseClassifier;
+import com.example.CourseRecommendation.utils.JsonMessageGetter;
 import com.example.CourseRecommendation.utils.crawler.java.CourseGetter.CourseGetter;
 import com.example.CourseRecommendation.utils.crawler.java.CourseGetter.SelectedCourse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import java.util.Collections;
 
 import java.util.*;
 
-import static com.example.CourseRecommendation.config.MyConfig.COURSE_DEFAULT_URL;
+import static com.example.CourseRecommendation.controller.knowledgeGraph.KnowledgeGraphController.type2TypeName;
+
 
 @Service
 public class UserService extends ServiceImpl<UserMapper, User> {
@@ -132,6 +135,12 @@ public class UserService extends ServiceImpl<UserMapper, User> {
         return recommendedCourses;
     }
 
+    public List<Map<String,Object>> recommendCourseCol(){
+        List<Map<String,Object>> courses = courseMapper.selectHotCourse();
+        Collections.shuffle(courses);
+        return courses.subList(0, 3);
+    }
+
     public Map<String, Object> login(String u_id) {
         Message message = new Message();
         userMapper.createWxUser(u_id);
@@ -139,6 +148,14 @@ public class UserService extends ServiceImpl<UserMapper, User> {
         userInfo.put("moment_num", momentMapper.selectMyMomentTotalNum(u_id));
         userInfo.put("course_num", userMapper.selectSelectedLessonPlanNumByUid(u_id));
         userInfo.put("follow_num", courseFollowMapper.selectFollowCoursesNumByUid(u_id));
+
+        Map<String, Object> objectMap = JsonMessageGetter.readJsonFile(
+                MyConfig.RESOURCE_PATH + "json/" +
+                        type2TypeName( Integer.parseInt(userInfo.get("u_major").toString())) + ".json");
+        userInfo.put("graph",objectMap);
+
+        message.setMeta("SUCCESS", 200);
+        message.setMessage(userInfo);
         message.setMessage(userInfo);
         return message;
     }
@@ -153,12 +170,17 @@ public class UserService extends ServiceImpl<UserMapper, User> {
             userInfo.put("moment_num", momentMapper.selectMyMomentTotalNum(u_id));
             userInfo.put("course_num", userMapper.selectSelectedLessonPlanNumByUid(u_id));
             userInfo.put("follow_num", courseFollowMapper.selectFollowCoursesNumByUid(u_id));
+
+            Map<String, Object> objectMap = JsonMessageGetter.readJsonFile(
+                    MyConfig.RESOURCE_PATH + "json/" +
+                            type2TypeName( Integer.parseInt(userInfo.get("u_major").toString())) + ".json");
+            userInfo.put("graph",objectMap);
+
             message.setMeta("SUCCESS", 200);
             message.setMessage(userInfo);
         }
         return message;
     }
-
 
     public Map<String, Object> sign(String u_id, String u_pwd) {
         Message message = new Message();
@@ -169,11 +191,9 @@ public class UserService extends ServiceImpl<UserMapper, User> {
         return message;
     }
 
-
     public boolean updateNickname(String u_id, String nickName) {
         return userMapper.updateNickname(u_id, nickName);
     }
-
 
     public boolean updateBirthday(String u_id, String birthday) {
         return userMapper.updateBirthday(u_id, birthday);
@@ -182,7 +202,6 @@ public class UserService extends ServiceImpl<UserMapper, User> {
     public boolean updateSchool(String u_id, String school) {
         return userMapper.updateSchool(u_id, school);
     }
-
 
     public boolean updateEmail(String u_id, String email) {
         return userMapper.updateEmail(u_id, email);

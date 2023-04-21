@@ -43,6 +43,12 @@ public interface CourseMapper extends BaseMapper<Course> {
     @Select("select * from course")
     List<Map<String,Object>> selectAll();
 
+
+    @Select("select * " +
+            "from course " +
+            "where c_name like concat('%',#{c_name},'%')")
+    List<Map<String,Object>> findCourse(@Param("c_name")String c_name);
+
     @Select("select c_no ," +
             "            c_name," +
             "            c_credit," +
@@ -77,13 +83,14 @@ public interface CourseMapper extends BaseMapper<Course> {
             "                                    course" +
             "                                    where u_student_id = (select user.u_student_id" +
             "                                    from user" +
-            "                                    where u_id = 'oY9YO5Qu2VMawql3jCmCE41OitD0')" +
+            "                                    where u_id = #{u_id})" +
             "                            and lp_category = '通识课'" +
             "                            and lesson_plan.c_no = course.c_no" +
             "                            group by course.c_category " +
             "                            order by num desc" +
             "                            limit 1) as cn)" +
             "    group by c_no" +
-            "    order by r_num desc) as `c.*rn`")
+            "    order by r_num desc) as `c.*rn` " +
+            "limit 30 ")
     List<Map<String,Object>> recommendByCategory(@Param("u_id") String u_id);
 }

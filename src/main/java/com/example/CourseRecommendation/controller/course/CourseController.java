@@ -38,8 +38,10 @@ public class CourseController {
 //    }
 
     @GetMapping("/find")
-    public List<Course> findCourse(@RequestParam("course_name") String course_name) {
-        return courseService.find(course_name);
+    public Map<String,Object> findCourse(@RequestParam("course_name") String course_name) {
+        Message message = new Message();
+        message.setMessage(courseService.find(course_name));
+        return message;
     }
 
     @GetMapping("/detail")

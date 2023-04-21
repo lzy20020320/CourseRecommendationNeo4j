@@ -50,7 +50,7 @@ public interface UserMapper extends BaseMapper<User> {
             "where lesson_plan.c_no = course.c_no and u_student_id = #{u_student_id}")
     List<Map<String, Object>> selectLessonPlanBySid(@Param("u_student_id") String student_id);
 
-    @Select("select course.c_no, c_name, c_credit, c_url, c_category, c_aim, c_content, c_reference, c_prerequisite, c_target_student " +
+    @Select("select course.c_no, c_name, c_credit, c_url,c_th_url, c_category, c_aim, c_content, c_reference, c_prerequisite, c_target_student " +
             "from lesson_plan,course " +
             "where lesson_plan.c_no = course.c_no and u_student_id = #{u_student_id} and lp_select = 1")
     List<Map<String, Object>> selectSelectedLessonPlanBySid(@Param("u_student_id") String student_id);

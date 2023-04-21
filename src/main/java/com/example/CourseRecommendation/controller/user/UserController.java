@@ -144,6 +144,14 @@ public class UserController {
 
     }
 
+    @GetMapping("/recommendedCourse/get_col")
+    public Map<String, Object> getRecommendedCourseCol(@RequestParam("openid") String openid) {
+        Message message = new Message();
+        message.setMessage(userService.recommendCourseCol());
+        return message;
+
+    }
+
 
 //    @DeleteMapping("/delete")
 //    public boolean deleteUser(@RequestParam String u_id) {

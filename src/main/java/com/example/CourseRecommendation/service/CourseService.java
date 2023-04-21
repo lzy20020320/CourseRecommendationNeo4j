@@ -23,12 +23,8 @@ public class CourseService extends ServiceImpl<CourseMapper, Course> {
     @Autowired
     CourseFollowMapper courseFollowMapper;
 
-    public List<Course> find(String course_name) {
-        QueryWrapper<Course> wrapper = new QueryWrapper<>();
-        wrapper.like("c_name", course_name);
-        //        for (Course course : courses)
-//            course.setUrl();
-        return courseMapper.selectList(wrapper);
+    public List<Map<String,Object>> find(String course_name) {
+        return courseMapper.findCourse(course_name);
     }
 
     public List<Map<String,Object>> selectAll() {

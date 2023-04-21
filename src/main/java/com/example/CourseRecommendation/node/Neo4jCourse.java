@@ -10,7 +10,6 @@ import org.springframework.data.neo4j.core.schema.Property;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.example.CourseRecommendation.config.MyConfig.COURSE_DEFAULT_URL;
 import static com.example.CourseRecommendation.entity.Course.categoryC2E;
 
 @Data
