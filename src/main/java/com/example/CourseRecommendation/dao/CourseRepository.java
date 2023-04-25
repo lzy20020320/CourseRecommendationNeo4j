@@ -19,21 +19,21 @@ public interface CourseRepository extends Neo4jRepository<Neo4jCourse, Long> {
 //    @Query("match(:course{no: $cno})-[r:BELONGS_TO]->(c:category) return c.name")
 //    String getCategoryByCno(@Param("cno") String cno);
 //
-    @Query("create (:course{no: $no,name:$name,credit:$credit,aim:'暂无简介',c_category:$category,c_url:'0',prerequisite:'无',reference:'暂无参考教材',target_student:'全体学生',content:'暂无简介'})")
+    @Query("merge (:course{no: $no,name:$name,credit:$credit,aim:'暂无简介',c_category:$category,c_url:'0',prerequisite:'无',reference:'暂无参考教材',target_student:'全体学生',content:'暂无简介'})")
     void createCourse(@Param(value = "no") String courseId,
                       @Param(value = "name") String courseName,
                       @Param(value = "credit") String credits,
                       @Param(value = "$category") String $category);
 
     //
-    @Query("match (co:course),(ca:category) where co.no=$no and ca.name=$name create (co)-[:BELONGS_TO]->(ca)")
+    @Query("match (co:course),(ca:category) where co.no=$no and ca.name=$name merge (co)-[:BELONGS_TO]->(ca)")
     void classifyCourse(@Param(value = "no") String courseId,
                         @Param(value = "name") String categoryName);
 
     //
 //    @Query("match (c:course),(s:student) where c.no=$courseId and s.student_id=$studentId create (s)-[r:SELECT{category:$category,term:$term,select:$select}]->(c)")
 //    void insertLessonPlan(@Param("studentId") String studentId, @Param("courseId") String courseId, @Param("category") String courseKind, @Param("term") String semester, @Param("select") boolean select);
-    @Query("match(u:user{openid:$openid}),(c:course{no:$no}) create(u)-[r:SELECT{category:$name}]->(c)")
+    @Query("match(u:user{openid:$openid}),(c:course{no:$no}) merge(u)-[r:SELECT{category:$name}]->(c)")
     void selectCourse(@Param("openid") String openid,
                       @Param(value = "no") String courseId,
                       @Param(value = "name") String categoryName);

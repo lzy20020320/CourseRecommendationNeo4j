@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.CourseRecommendation.config.MyConfig;
 import com.example.CourseRecommendation.controller.message.Message;
 import com.example.CourseRecommendation.dao.CourseRepository;
-import com.example.CourseRecommendation.entity.Course;
+import com.example.CourseRecommendation.dao.UserRepository;
 import com.example.CourseRecommendation.entity.User;
 import com.example.CourseRecommendation.mapper.*;
 import com.example.CourseRecommendation.node.Neo4jCourse;
@@ -15,6 +15,7 @@ import com.example.CourseRecommendation.utils.crawler.java.CourseGetter.Selected
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
 import java.util.Collections;
 
 import java.util.*;
@@ -41,6 +42,9 @@ public class UserService extends ServiceImpl<UserMapper, User> {
     @Autowired
     CourseRepository courseRepository;
 
+    @Autowired
+    UserRepository userRepository;
+
     public String getOpenid(String temporaryId) {
         RestTemplate template = new RestTemplate();
         String url = "https://api.weixin.qq.com/sns/jscode2session?appid=wx07d4ba749ffe08ce&secret=3a51553e895d1a87d69f3d4e766daade&js_code={code}&grant_type=authorization_code";
@@ -49,7 +53,19 @@ public class UserService extends ServiceImpl<UserMapper, User> {
         paramMap.put("code", temporaryId);
 
         String result = template.getForObject(url, String.class, paramMap);
-        System.out.println(result);
+        if (result != null && result.length() > 0) {
+            result = result.substring(0, result.length() - 1);
+        }
+        assert result != null;
+        result = result.replaceAll(",\"session_key\":\"[^\"]*\"|\"session_key\":\"[^\"]*\",", "");
+        Map<String, Object> objectMap = JsonMessageGetter.readJsonFile(MyConfig.RESOURCE_PATH + "myconfig.json");
+
+        String version;
+        if (objectMap != null && objectMap.containsKey("version"))
+            version = objectMap.get("version").toString();
+        else
+            version = "1";
+        result = result + ",\"version\":\"" + version + "\"}";
         return result;
     }
 
@@ -71,7 +87,7 @@ public class UserService extends ServiceImpl<UserMapper, User> {
                     courseMapper.updateCourseCategory(selectedCourse.getCourseId(), category);
                     // 更新neo4j
                     courseRepository.createCourse(selectedCourse.getCourseId(),
-                            selectedCourse.getCourseName(), Float.toString(selectedCourse.getCredits()),category);
+                            selectedCourse.getCourseName(), Float.toString(selectedCourse.getCredits()), category);
                     courseRepository.classifyCourse(selectedCourse.getCourseId(), category);
                 } catch (Exception ignored) {
                 }
@@ -97,12 +113,12 @@ public class UserService extends ServiceImpl<UserMapper, User> {
     }
 
     public List<Neo4jCourse> getRecommendedCourses(String studentId) {
-        int min_len = 6;
+        int min_len = 20;
         List<Neo4jCourse> recommendedCourses = new ArrayList<>();
         List<String> courseNames = new ArrayList<>();
         List<Neo4jCourse> recommendedCourseByRecommendation = courseRepository.getRecommendedCourseByRecommendation(studentId);
         for (Neo4jCourse course : recommendedCourseByRecommendation) {
-            if (recommendedCourses.size() < min_len){
+            if (recommendedCourses.size() < min_len) {
 //                course.setUrl();
                 recommendedCourses.add(course);
                 courseNames.add(course.getName());
@@ -132,18 +148,31 @@ public class UserService extends ServiceImpl<UserMapper, User> {
             }
         }
 
+        if (recommendedCourses.size() < min_len) {
+            List<Map<String, Object>> courses = courseMapper.selectHotCourse();
+            for (Map<String, Object> course : courses) {
+                Neo4jCourse neo4jCourse = Neo4jCourse.Map2Neo4jCourse(course);
+                if (!courseNames.contains(neo4jCourse.getName()) && recommendedCourses.size() < min_len) {
+//                    neo4jCourse.setUrl();
+                    recommendedCourses.add(neo4jCourse);
+                    courseNames.add(neo4jCourse.getName());
+                }
+            }
+        }
+
         return recommendedCourses;
     }
 
-    public List<Map<String,Object>> recommendCourseCol(){
-        List<Map<String,Object>> courses = courseMapper.selectHotCourse();
+    public List<Map<String, Object>> hotCourseCol(int size) {
+        List<Map<String, Object>> courses = courseMapper.selectHotCourse();
         Collections.shuffle(courses);
-        return courses.subList(0, 3);
+        return courses.subList(0, size);
     }
 
     public Map<String, Object> login(String u_id) {
         Message message = new Message();
         userMapper.createWxUser(u_id);
+        userRepository.createUser(u_id);
         Map<String, Object> userInfo = userMapper.selectById(u_id);
         userInfo.put("moment_num", momentMapper.selectMyMomentTotalNum(u_id));
         userInfo.put("course_num", userMapper.selectSelectedLessonPlanNumByUid(u_id));
@@ -151,8 +180,8 @@ public class UserService extends ServiceImpl<UserMapper, User> {
 
         Map<String, Object> objectMap = JsonMessageGetter.readJsonFile(
                 MyConfig.RESOURCE_PATH + "json/" +
-                        type2TypeName( Integer.parseInt(userInfo.get("u_major").toString())) + ".json");
-        userInfo.put("graph",objectMap);
+                        type2TypeName(Integer.parseInt(userInfo.get("u_major").toString())) + ".json");
+        userInfo.put("graph", objectMap);
 
         message.setMeta("SUCCESS", 200);
         message.setMessage(userInfo);
@@ -173,8 +202,8 @@ public class UserService extends ServiceImpl<UserMapper, User> {
 
             Map<String, Object> objectMap = JsonMessageGetter.readJsonFile(
                     MyConfig.RESOURCE_PATH + "json/" +
-                            type2TypeName( Integer.parseInt(userInfo.get("u_major").toString())) + ".json");
-            userInfo.put("graph",objectMap);
+                            type2TypeName(Integer.parseInt(userInfo.get("u_major").toString())) + ".json");
+            userInfo.put("graph", objectMap);
 
             message.setMeta("SUCCESS", 200);
             message.setMessage(userInfo);
@@ -184,9 +213,10 @@ public class UserService extends ServiceImpl<UserMapper, User> {
 
     public Map<String, Object> sign(String u_id, String u_pwd) {
         Message message = new Message();
-        if (u_id.length() == 11 && userMapper.createUser(u_id, u_pwd) != 0)
+        if (u_id.length() == 11 && userMapper.createUser(u_id, u_pwd) != 0) {
+            userRepository.createUser(u_id);
             message.setMeta("SUCCESS", 200);
-        else
+        } else
             message.setMeta("FAIL", 200);
         return message;
     }

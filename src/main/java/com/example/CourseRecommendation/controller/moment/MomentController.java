@@ -76,4 +76,9 @@ public class MomentController {
         message.setMessage(data);
         return message;
     }
+
+    @GetMapping("/like")
+    public boolean likeMoment(@RequestParam("m_id") String m_id) {
+        return momentService.likeMoment(m_id);
+    }
 }

@@ -23,7 +23,6 @@ public class Course {
     @TableField("c_url")
     private String url;
 
-
     @TableField("c_th_url")
     private String th_url;
     @TableField("c_category")

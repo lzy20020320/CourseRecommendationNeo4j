@@ -1,5 +1,10 @@
 server:
-  port: 8888
+#  port: 8888
+  port: 8080
+#  ssl:
+#    key-store: classpath:ruikezhixuan.asia.jks
+#    key-store-type: JKS
+#    key-store-password: 34i33py16w3
 
 spring:
   datasource:
@@ -19,7 +24,8 @@ spring:
   web:
     resources:
 #      static-locations: classpath:/static,classpath:/public,classpath:/resources
-      static-locations: file:F:/jarTest/resources/static/
+#      static-locations: file:F:/jarTest/resources/static/
+      static-locations: file:/home/ubuntu/resources/static/
 
 
 mybatis:

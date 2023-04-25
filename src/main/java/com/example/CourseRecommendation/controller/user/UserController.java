@@ -3,15 +3,19 @@ package com.example.CourseRecommendation.controller.user;
 import com.example.CourseRecommendation.config.MyConfig;
 import com.example.CourseRecommendation.controller.message.Message;
 import com.example.CourseRecommendation.dao.UserRepository;
+import com.example.CourseRecommendation.entity.UserAvatar;
 import com.example.CourseRecommendation.node.Neo4jCourse;
 import com.example.CourseRecommendation.service.UserService;
 import com.example.CourseRecommendation.utils.DownloadImg;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import static com.google.common.primitives.Ints.min;
 
 @RestController
 @RequestMapping("/user")
@@ -94,13 +98,13 @@ public class UserController {
     }
 
 
-    @GetMapping("/updateAvatar")
-    public void updateAvatar(@RequestParam("openid") String u_id,
-                             @RequestParam("url") String base64) {
-
+    @PostMapping("/updateAvatar")
+    public void updateAvatar(@RequestBody UserAvatar userAvatar) {
+        String base64 = userAvatar.getUrl();
+        String u_id = userAvatar.getOpenid();
         try {
             String t = String.valueOf((new Date().getTime()));
-            DownloadImg.saveImageFromBase64(base64, MyConfig.RESOURCE_PATH + "static\\img\\avatar\\" + u_id + t + ".jpg");
+            DownloadImg.saveImageFromBase64(base64, MyConfig.RESOURCE_PATH + "static/img/avatar/" + u_id + t + ".jpg");
             userService.updateAvatar(u_id, u_id + t);
         } catch (Exception ignore) {
             System.out.println("error");
@@ -139,15 +143,19 @@ public class UserController {
     @GetMapping("/recommendedCourse/get")
     public Map<String, Object> getRecommendedCourses(@RequestParam("openid") String openid) {
         Message message = new Message();
-        message.setMessage(userService.getRecommendedCourses(openid));
-        return message;
 
+        List<Neo4jCourse> recommendedCourses = userService.getRecommendedCourses(openid);
+        Collections.shuffle(recommendedCourses);
+        System.out.println(recommendedCourses.size());
+        message.setMessage(recommendedCourses.subList(0, min(recommendedCourses.size(),6)));
+
+        return message;
     }
 
     @GetMapping("/recommendedCourse/get_col")
     public Map<String, Object> getRecommendedCourseCol(@RequestParam("openid") String openid) {
         Message message = new Message();
-        message.setMessage(userService.recommendCourseCol());
+        message.setMessage(userService.hotCourseCol(3));
         return message;
 
     }
