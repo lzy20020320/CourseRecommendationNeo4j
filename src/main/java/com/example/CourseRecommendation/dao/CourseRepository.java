@@ -19,11 +19,13 @@ public interface CourseRepository extends Neo4jRepository<Neo4jCourse, Long> {
 //    @Query("match(:course{no: $cno})-[r:BELONGS_TO]->(c:category) return c.name")
 //    String getCategoryByCno(@Param("cno") String cno);
 //
-    @Query("merge (:course{no: $no,name:$name,credit:$credit,aim:'暂无简介',c_category:$category,c_url:'0',prerequisite:'无',reference:'暂无参考教材',target_student:'全体学生',content:'暂无简介'})")
+    @Query("merge (:course{no: $no,name:$name,credit:$credit,aim:'暂无简介',c_category:$category,c_url:$c_url,c_th_url:$c_th_url,prerequisite:'无',reference:'暂无参考教材',target_student:'全体学生',content:'暂无简介'})")
     void createCourse(@Param(value = "no") String courseId,
                       @Param(value = "name") String courseName,
                       @Param(value = "credit") String credits,
-                      @Param(value = "$category") String $category);
+                      @Param(value = "category") String category,
+                      @Param(value = "c_url") String c_url,
+                      @Param(value = "c_th_url") String c_th_url);
 
     //
     @Query("match (co:course),(ca:category) where co.no=$no and ca.name=$name merge (co)-[:BELONGS_TO]->(ca)")

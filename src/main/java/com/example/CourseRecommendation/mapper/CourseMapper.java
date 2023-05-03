@@ -24,6 +24,17 @@ public interface CourseMapper extends BaseMapper<Course> {
             "where c_no = #{no}")
     boolean updateCourseCategory(@Param("no") String no, @Param("category") String category);
 
+
+    @Update("update course " +
+            "set c_url = #{url} " +
+            "where c_no = #{no}")
+    boolean updateCourseUrl(@Param("no") String no, @Param("url") String url);
+
+    @Update("update course " +
+            "set c_th_url = #{th_url} " +
+            "where c_no = #{no}")
+    boolean updateCourseThUrl(@Param("no") String no, @Param("th_url") String th_url);
+
     @Select("select c_no from course")
     List<String> selectAllCno();
 

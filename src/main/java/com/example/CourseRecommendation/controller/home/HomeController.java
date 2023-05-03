@@ -21,6 +21,18 @@ public class HomeController {
         return message;
     }
 
+    @GetMapping("/swiperurl")
+    public Map<String, Object> getSwiperUrl() {
+        Message message = new Message();
+        List<String> urlList = new ArrayList<>();
+        urlList.add("https://mp.weixin.qq.com/s?__biz=MzkzMDQ4NzUyMQ==&mid=2247483706&idx=1&sn=c5afad329d759f066d7adad0d67ebdbf");
+        urlList.add("https://mp.weixin.qq.com/s?__biz=MzkzMDQ4NzUyMQ==&mid=2247483706&idx=1&sn=c5afad329d759f066d7adad0d67ebdbf");
+        urlList.add("https://mp.weixin.qq.com/s?__biz=MzkzMDQ4NzUyMQ==&mid=2247483706&idx=1&sn=c5afad329d759f066d7adad0d67ebdbf");
+        urlList.add("https://mp.weixin.qq.com/s?__biz=MzkzMDQ4NzUyMQ==&mid=2247483706&idx=1&sn=c5afad329d759f066d7adad0d67ebdbf");
+        message.setMessage(urlList);
+        return message;
+    }
+
     @GetMapping("/catitems")
     public Map<String, Object> getCatItems() {
         Message message = new Message();

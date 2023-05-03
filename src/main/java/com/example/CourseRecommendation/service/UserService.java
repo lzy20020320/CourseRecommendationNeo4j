@@ -5,6 +5,7 @@ import com.example.CourseRecommendation.config.MyConfig;
 import com.example.CourseRecommendation.controller.message.Message;
 import com.example.CourseRecommendation.dao.CourseRepository;
 import com.example.CourseRecommendation.dao.UserRepository;
+import com.example.CourseRecommendation.entity.Course;
 import com.example.CourseRecommendation.entity.User;
 import com.example.CourseRecommendation.mapper.*;
 import com.example.CourseRecommendation.node.Neo4jCourse;
@@ -85,10 +86,15 @@ public class UserService extends ServiceImpl<UserMapper, User> {
                 try {
                     String category = CourseClassifier.courseClassify(selectedCourse.getCourseName());
                     courseMapper.updateCourseCategory(selectedCourse.getCourseId(), category);
+                    courseMapper.updateCourseUrl(selectedCourse.getCourseId(), Course.category2Url(category));
+                    courseMapper.updateCourseThUrl(selectedCourse.getCourseId(), Course.category2ThUrl(category));
+
                     // 更新neo4j
-                    courseRepository.createCourse(selectedCourse.getCourseId(),
-                            selectedCourse.getCourseName(), Float.toString(selectedCourse.getCredits()), category);
+                    courseRepository.createCourse(selectedCourse.getCourseId(), selectedCourse.getCourseName(),
+                            Float.toString(selectedCourse.getCredits()), category,
+                            Course.category2Url(category), Course.category2ThUrl(category));
                     courseRepository.classifyCourse(selectedCourse.getCourseId(), category);
+
                 } catch (Exception ignored) {
                 }
             }
@@ -171,6 +177,10 @@ public class UserService extends ServiceImpl<UserMapper, User> {
 
     public Map<String, Object> login(String u_id) {
         Message message = new Message();
+        if (Objects.equals(u_id, "undefined")){
+            message.setMeta("FAIL", 200);
+            return message;
+        }
         userMapper.createWxUser(u_id);
         userRepository.createUser(u_id);
         Map<String, Object> userInfo = userMapper.selectById(u_id);
@@ -192,6 +202,10 @@ public class UserService extends ServiceImpl<UserMapper, User> {
 
     public Map<String, Object> login(String u_id, String u_pwd) {
         Message message = new Message();
+        if (Objects.equals(u_id, "undefined")){
+            message.setMeta("FAIL", 200);
+            return message;
+        }
         Map<String, Object> userInfo = userMapper.selectByIdAndPwd(u_id, u_pwd);
         if (userInfo == null)
             message.setMeta("FAIL", 200);
@@ -204,7 +218,7 @@ public class UserService extends ServiceImpl<UserMapper, User> {
                     MyConfig.RESOURCE_PATH + "json/" +
                             type2TypeName(Integer.parseInt(userInfo.get("u_major").toString())) + ".json");
             userInfo.put("graph", objectMap);
-
+            this.followUser(u_id, u_id);
             message.setMeta("SUCCESS", 200);
             message.setMessage(userInfo);
         }

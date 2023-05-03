@@ -83,5 +83,59 @@ public class Course {
         }
     }
 
+    static public String category2Url(String category) {
+        switch (category) {
+            case "思想政治":
+                return "https://i.328888.xyz/2023/04/20/iFaTlt.png";
+            case "体育健康":
+                return "https://i.328888.xyz/2023/04/20/iFQvOC.md.jpeg";
+            case "自然科学":
+                return "https://i.328888.xyz/2023/04/20/iF1ItZ.md.jpeg";
+            case "创新实践":
+                return "https://i.328888.xyz/2023/04/20/iFPxMx.md.jpeg";
+            case "工程科学":
+                return "https://i.328888.xyz/2023/04/20/iFKKsd.md.jpeg";
+            case "历史文化":
+                return "https://i.328888.xyz/2023/04/20/iFLn28.md.jpeg";
+            case "社会科学":
+                return "https://i.328888.xyz/2023/04/20/iFQAdE.md.jpeg";
+            case "综合":
+                return "https://i.328888.xyz/2023/04/20/iFKVjt.md.jpeg";
+            case "跨文化交流":
+                return "https://i.328888.xyz/2023/04/20/iFT24p.md.jpeg";
+            case "人文艺术":
+                return "https://i.328888.xyz/2023/04/20/iFMF1J.md.jpeg";
+            default:
+                return "";
+        }
+    }
+
+    static public String category2ThUrl(String category) {
+        switch (category) {
+            case "思想政治":
+                return "https://i.328888.xyz/2023/04/20/iFaTlt.th.png";
+            case "体育健康":
+                return "https://i.328888.xyz/2023/04/20/iFQvOC.th.jpeg";
+            case "自然科学":
+                return "https://i.328888.xyz/2023/04/20/iF1ItZ.th.jpeg";
+            case "创新实践":
+                return "https://i.328888.xyz/2023/04/20/iFPxMx.th.jpeg";
+            case "工程科学":
+                return "https://i.328888.xyz/2023/04/20/iFKKsd.th.jpeg";
+            case "历史文化":
+                return "https://i.328888.xyz/2023/04/20/iFLn28.th.jpeg";
+            case "社会科学":
+                return "https://i.328888.xyz/2023/04/20/iFQAdE.th.jpeg";
+            case "综合":
+                return "https://i.328888.xyz/2023/04/20/iFKVjt.th.jpeg";
+            case "跨文化交流":
+                return "https://i.328888.xyz/2023/04/20/iFT24p.th.jpeg";
+            case "人文艺术":
+                return "https://i.328888.xyz/2023/04/20/iFMF1J.th.jpeg";
+            default:
+                return "";
+        }
+    }
+
 
 }

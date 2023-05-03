@@ -34,31 +34,31 @@ public class FloorDataMap extends HashMap<String, Object> {
         floorDataMapList.add(new FloorDataMap("时尚女装","https://api-hmugo-web.itheima.net/pyg/pic_floor01_title.png"));
         floorDataMapList.get(0).addContent(
                 "优质服饰",
-                MyConfig.ADDR+"/img/book/1.png",
+                MyConfig.ADDR+"/img/book/science/1.png",
                 "232",
                 "/pages/goods_list?query=服饰"
         );
         floorDataMapList.get(0).addContent(
                 "春季热门",
-                MyConfig.ADDR+"/img/book/2.png",
+                MyConfig.ADDR+"/img/book/science/2.png",
                 "252",
                 "/pages/goods_list?query=热"
         );
         floorDataMapList.get(0).addContent(
                 "爆款清仓",
-                MyConfig.ADDR+"/img/book/3.png",
+                MyConfig.ADDR+"/img/book/science/3.png",
                 "252",
                 "/pages/goods_list?query=爆款"
         );
         floorDataMapList.get(0).addContent(
                 "倒春寒",
-                MyConfig.ADDR+"/img/book/4.png",
+                MyConfig.ADDR+"/img/book/science/4.png",
                 "252",
                 "/pages/goods_list?query=春季"
         );
         floorDataMapList.get(0).addContent(
                 "怦然心动",
-                MyConfig.ADDR+"/img/book/5.png",
+                MyConfig.ADDR+"/img/book/science/5.png",
                 "252",
                 "/pages/goods_list?query=心动"
         );

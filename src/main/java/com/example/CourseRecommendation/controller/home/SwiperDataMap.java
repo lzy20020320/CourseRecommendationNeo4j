@@ -18,23 +18,23 @@ public class SwiperDataMap extends HashMap<String, Object> {
 
     public static List<SwiperDataMap> SwiperDataMapList() {
         List<String> srcList = Arrays.asList(
-                "https://i.328888.xyz/2023/04/20/iGicIA.md.jpeg",
-                "https://i.328888.xyz/2023/04/20/iGicIA.md.jpeg",
-                "https://i.328888.xyz/2023/04/20/iGicIA.md.jpeg",
-                "https://i.328888.xyz/2023/04/20/iGicIA.md.jpeg");
+                "https://ruikezhixuan.cpolar.top/img/homeImg/swiperImg/1.png",
+                "https://ruikezhixuan.cpolar.top/img/homeImg/swiperImg/2.png",
+                "https://ruikezhixuan.cpolar.top/img/homeImg/swiperImg/3.png",
+                "https://ruikezhixuan.cpolar.top/img/homeImg/swiperImg/4.png");
 
         List<String> noList = Arrays.asList(
-                "00816394",
-                "0081A004",
-                "00853001",
-                "0100Y016"
+                "0",
+                "1",
+                "2",
+                "3"
         );
 
         List<String> urlList = Arrays.asList(
-                "",
-                "",
-                "",
-                ""
+                "https://mp.weixin.qq.com/s?__biz=MzkzMDQ4NzUyMQ==&mid=2247483706&idx=1&sn=c5afad329d759f066d7adad0d67ebdbf",
+                "https://mp.weixin.qq.com/s?__biz=MzkzMDQ4NzUyMQ==&mid=2247483706&idx=1&sn=c5afad329d759f066d7adad0d67ebdbf",
+                "https://mp.weixin.qq.com/s?__biz=MzkzMDQ4NzUyMQ==&mid=2247483706&idx=1&sn=c5afad329d759f066d7adad0d67ebdbf",
+                "https://mp.weixin.qq.com/s?__biz=MzkzMDQ4NzUyMQ==&mid=2247483706&idx=1&sn=c5afad329d759f066d7adad0d67ebdbf"
         );
 
         List<SwiperDataMap> swiperDataMapList = new ArrayList<>();
