@@ -39,7 +39,7 @@ public interface CourseMapper extends BaseMapper<Course> {
     List<String> selectAllCno();
 
     @Select("select * from course where c_no = #{no} ")
-    Map<String,Object> selectByNo(@Param("no") String no);
+    Map<String, Object> selectByNo(@Param("no") String no);
 
 
     @Select("select moment.c_no, c_name, c_url,c_th_url,c_aim,c_category,COUNT(m_recommended) as r_num " +
@@ -49,16 +49,28 @@ public interface CourseMapper extends BaseMapper<Course> {
             "group by moment.c_no, c_name " +
             "order by r_num desc " +
             "limit 30")
-    List<Map<String,Object>> selectHotCourse();
+    List<Map<String, Object>> selectHotCourse();
+
+
+    @Select("select moment.c_no, c_name, c_url,c_th_url,c_aim,c_category,COUNT(m_recommended) as r_num " +
+            "from course,moment " +
+            "where m_recommended = 1 and " +
+            "      course.c_no = moment.c_no and " +
+            "      course.c_category = #{category} " +
+            "group by moment.c_no, c_name " +
+            "order by r_num desc " +
+            "limit 30")
+    List<Map<String, Object>> selectCategoryHotCourse(@Param("category") String category);
+
 
     @Select("select * from course")
-    List<Map<String,Object>> selectAll();
+    List<Map<String, Object>> selectAll();
 
 
     @Select("select * " +
             "from course " +
             "where c_name like concat('%',#{c_name},'%')")
-    List<Map<String,Object>> findCourse(@Param("c_name")String c_name);
+    List<Map<String, Object>> findCourse(@Param("c_name") String c_name);
 
     @Select("select c_no ," +
             "            c_name," +
@@ -103,5 +115,5 @@ public interface CourseMapper extends BaseMapper<Course> {
             "    group by c_no" +
             "    order by r_num desc) as `c.*rn` " +
             "limit 30 ")
-    List<Map<String,Object>> recommendByCategory(@Param("u_id") String u_id);
+    List<Map<String, Object>> recommendByCategory(@Param("u_id") String u_id);
 }

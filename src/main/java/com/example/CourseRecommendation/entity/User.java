@@ -47,5 +47,8 @@ public class User {
     @TableField("u_authenticated")
     String authenticated;
 
+    @TableField("u_item")
+    String u_item;
+
 
 }

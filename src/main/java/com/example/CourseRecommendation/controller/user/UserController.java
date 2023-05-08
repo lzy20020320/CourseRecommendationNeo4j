@@ -93,6 +93,12 @@ public class UserController {
         return userService.updateSignature(u_id, signature);
     }
 
+    @GetMapping("/updateItem")
+    public boolean updateItem(@RequestParam("openid") String u_id,
+                                   @RequestParam("item") String item) {
+        return userService.updateItem(u_id, item);
+    }
+
     @GetMapping("/updateMajor")
     public boolean updateMajor(@RequestParam("openid") String u_id,
                                @RequestParam("major") int major) {

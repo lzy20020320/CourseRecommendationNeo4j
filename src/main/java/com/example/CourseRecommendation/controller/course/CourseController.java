@@ -5,6 +5,8 @@ import com.example.CourseRecommendation.controller.message.Message;
 import com.example.CourseRecommendation.entity.Course;
 import com.example.CourseRecommendation.service.CourseService;
 import com.example.CourseRecommendation.service.OpenCourseService;
+import com.example.CourseRecommendation.service.QuestionService;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +22,10 @@ public class CourseController {
     private OpenCourseService openCourseService;
     @Autowired
     private CourseService courseService;
+
+
+    @Autowired
+    private QuestionService questionService;
 
 //    @GetMapping("/openCourse/saveAll")
 //    public void saveAllOpenCourse() {
@@ -68,6 +74,16 @@ public class CourseController {
     public Map<String, Object> getHotCourse() {
         Message message = new Message();
         message.setMessage(courseService.selectHotCourse());
+        return message;
+    }
+
+    @GetMapping("/question")
+    public Map<String, Object> getQuestion(@RequestParam("course_no") String course_no) {
+        Message message = new Message();
+        Map<String, Object> data = questionService.getByCno(course_no);
+        message.setMessage(data);
+        if (data ==null)
+            message.setMeta("FAILED",400);
         return message;
     }
 

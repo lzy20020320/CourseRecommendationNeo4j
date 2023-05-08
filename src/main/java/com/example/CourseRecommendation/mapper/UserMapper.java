@@ -21,12 +21,12 @@ public interface UserMapper extends BaseMapper<User> {
     int createUser(@Param("u_id") String u_id, @Param("u_pwd") String u_pwd);
 
 
-    @Select("select u_id, u_student_id, u_nickname, u_gender, u_hobby, u_birthday, u_email, u_url, u_major, u_school, u_signature, u_authenticated " +
+    @Select("select u_id, u_student_id, u_nickname, u_gender, u_hobby, u_birthday, u_email, u_url, u_major, u_school, u_signature, u_authenticated,u_item " +
             "from user where u_id=#{u_id}")
     Map<String, Object> selectById(@Param("u_id") String u_id);
 
 
-    @Select("select u_id, u_student_id, u_nickname, u_gender, u_hobby, u_birthday, u_email, u_url, u_major, u_school, u_signature, u_authenticated " +
+    @Select("select u_id, u_student_id, u_nickname, u_gender, u_hobby, u_birthday, u_email, u_url, u_major, u_school, u_signature, u_authenticated,u_item " +
             "from user where u_id=#{u_id} and u_pwd = #{u_pwd}")
     Map<String, Object> selectByIdAndPwd(@Param("u_id") String u_id, @Param("u_pwd") String u_pwd);
 
@@ -99,10 +99,16 @@ public interface UserMapper extends BaseMapper<User> {
 
 
     @Update("update user " +
+            "set u_item = #{u_item} " +
+            "where u_id=#{u_id}")
+    boolean updateItem(@Param("u_id") String uId,
+                                @Param("u_item") String item);
+
+    @Update("update user " +
             "set u_authenticated = #{authenticated} " +
             "where u_id=#{u_id}")
     boolean updateAuthenticated(@Param("u_id") String uId,
-                            @Param("authenticated") String authenticated);
+                                @Param("authenticated") String authenticated);
 
     @Update("update user " +
             "set u_birthday = #{birthday} " +

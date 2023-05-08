@@ -83,6 +83,35 @@ public class Course {
         }
     }
 
+    static public String categoryE2C(String category) {
+        switch (category) {
+            case "politics":
+                return "思想政治";
+            case "sports":
+                return "体育健康";
+            case "science":
+                return "自然科学";
+            case "innovation":
+                return "创新实践";
+            case "engineering":
+                return "工程科学";
+            case "history":
+                return "历史文化";
+            case "society":
+                return "社会科学";
+            case "comprehensive":
+                return "综合";
+            case "intercultural":
+                return "跨文化交流";
+            case "humanity":
+                return "人文艺术";
+            default:
+                return "";
+
+        }
+    }
+
+
     static public String category2Url(String category) {
         switch (category) {
             case "思想政治":

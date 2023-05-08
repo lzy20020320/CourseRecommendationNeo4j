@@ -2,17 +2,14 @@ package com.example.CourseRecommendation.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.example.CourseRecommendation.config.MyConfig;
 import com.example.CourseRecommendation.entity.Course;
 import com.example.CourseRecommendation.mapper.CourseFollowMapper;
 import com.example.CourseRecommendation.mapper.CourseMapper;
-import com.example.CourseRecommendation.utils.crawler.java.CourseGetter.CourseGetter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @Service
 public class CourseService extends ServiceImpl<CourseMapper, Course> {

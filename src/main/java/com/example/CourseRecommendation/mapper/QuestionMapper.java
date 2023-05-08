@@ -13,5 +13,5 @@ public interface QuestionMapper extends BaseMapper<Question> {
     @Select("select *" +
             "from question " +
             "where c_no = #{c_no}")
-    Map<String,Object> selectAllByC_no(@Param("c_no") String c_no);
+    Map<String,Object> selectByCno(@Param("c_no") String c_no);
 }

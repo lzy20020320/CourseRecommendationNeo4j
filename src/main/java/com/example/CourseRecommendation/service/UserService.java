@@ -177,7 +177,7 @@ public class UserService extends ServiceImpl<UserMapper, User> {
 
     public Map<String, Object> login(String u_id) {
         Message message = new Message();
-        if (Objects.equals(u_id, "undefined")){
+        if (Objects.equals(u_id, "undefined")) {
             message.setMeta("FAIL", 200);
             return message;
         }
@@ -187,7 +187,7 @@ public class UserService extends ServiceImpl<UserMapper, User> {
         userInfo.put("moment_num", momentMapper.selectMyMomentTotalNum(u_id));
         userInfo.put("course_num", userMapper.selectSelectedLessonPlanNumByUid(u_id));
         userInfo.put("follow_num", courseFollowMapper.selectFollowCoursesNumByUid(u_id));
-
+        userInfo.put("item", "https://ruikezhixuan.cpolar.top/img/itemImg/item" + userInfo.get("u_item") + ".png");
         Map<String, Object> objectMap = JsonMessageGetter.readJsonFile(
                 MyConfig.RESOURCE_PATH + "json/" +
                         type2TypeName(Integer.parseInt(userInfo.get("u_major").toString())) + ".json");
@@ -202,7 +202,7 @@ public class UserService extends ServiceImpl<UserMapper, User> {
 
     public Map<String, Object> login(String u_id, String u_pwd) {
         Message message = new Message();
-        if (Objects.equals(u_id, "undefined")){
+        if (Objects.equals(u_id, "undefined")) {
             message.setMeta("FAIL", 200);
             return message;
         }
@@ -213,6 +213,7 @@ public class UserService extends ServiceImpl<UserMapper, User> {
             userInfo.put("moment_num", momentMapper.selectMyMomentTotalNum(u_id));
             userInfo.put("course_num", userMapper.selectSelectedLessonPlanNumByUid(u_id));
             userInfo.put("follow_num", courseFollowMapper.selectFollowCoursesNumByUid(u_id));
+            userInfo.put("item", "https://ruikezhixuan.cpolar.top/img/itemImg/item" + userInfo.get("u_item") + ".png");
 
             Map<String, Object> objectMap = JsonMessageGetter.readJsonFile(
                     MyConfig.RESOURCE_PATH + "json/" +
@@ -257,6 +258,10 @@ public class UserService extends ServiceImpl<UserMapper, User> {
 
     public boolean updateSignature(String u_id, String signature) {
         return userMapper.updateSignature(u_id, signature);
+    }
+
+    public boolean updateItem(String u_id, String item) {
+        return userMapper.updateItem(u_id, item);
     }
 
     public boolean updateGender(String u_id, int gender) {
