@@ -26,9 +26,8 @@ public class HomeController {
         Message message = new Message();
         List<String> urlList = new ArrayList<>();
         urlList.add("https://mp.weixin.qq.com/s?__biz=MzkzMDQ4NzUyMQ==&mid=2247483706&idx=1&sn=c5afad329d759f066d7adad0d67ebdbf");
-        urlList.add("https://mp.weixin.qq.com/s?__biz=MzkzMDQ4NzUyMQ==&mid=2247483706&idx=1&sn=c5afad329d759f066d7adad0d67ebdbf");
-        urlList.add("https://mp.weixin.qq.com/s?__biz=MzkzMDQ4NzUyMQ==&mid=2247483706&idx=1&sn=c5afad329d759f066d7adad0d67ebdbf");
-        urlList.add("https://mp.weixin.qq.com/s?__biz=MzkzMDQ4NzUyMQ==&mid=2247483706&idx=1&sn=c5afad329d759f066d7adad0d67ebdbf");
+        urlList.add("https://mp.weixin.qq.com/s?__biz=MzkzMDQ4NzUyMQ==&mid=2247483723&idx=1&sn=29406d4a64807ec29a97bfdf3e006aef");
+        urlList.add("https://mp.weixin.qq.com/s?__biz=MzkzMDQ4NzUyMQ==&mid=2247483782&idx=1&sn=98fe495096c38997b9585716b11d3d7e");
         message.setMessage(urlList);
         return message;
     }

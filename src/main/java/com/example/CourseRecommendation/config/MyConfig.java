@@ -10,7 +10,7 @@ public class MyConfig {
     final static public String ADDR = "https://ruikezhixuan.cpolar.top";
 
     //    final static public String RESOURCE_PATH = "E:\\CodeProject\\IdeaProjects\\CourseRecommendationNeo4j\\src\\main\\resources\\";
-//    final static public String RESOURCE_PATH = "F:\\jarTest\\resources\\";
+    // final static public String RESOURCE_PATH = "F:\\jarTest\\resources\\";
 
     final static public String RESOURCE_PATH = "/home/ubuntu/resources/";
 

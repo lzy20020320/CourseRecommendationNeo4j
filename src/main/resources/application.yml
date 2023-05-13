@@ -1,5 +1,5 @@
 server:
-#  port: 8888
+  #  port: 8888
   port: 8080
 #  ssl:
 #    key-store: classpath:ruikezhixuan.asia.jks
@@ -11,20 +11,27 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/course_recommendation?serverTimezone=GMT%2b8
     username: root
-    password: 1111
+    password: EeqJh4pigelJjvXz
+#    password: 1111
+
   neo4j:
     authentication:
       password: 11111111
       username: neo4j
     uri: bolt://localhost:7687
+
+  data:
+    mongodb:
+      uri: mongodb://root:1111@localhost:27017/test?authMechanism=SCRAM-SHA-1&authSource=admin
+
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
     static-path-pattern: /static/**
   web:
     resources:
-#      static-locations: classpath:/static,classpath:/public,classpath:/resources
-#      static-locations: file:F:/jarTest/resources/static/
+      #      static-locations: classpath:/static,classpath:/public,classpath:/resources
+      #      static-locations: file:F:/jarTest/resources/static/
       static-locations: file:/home/ubuntu/resources/static/
 
 

@@ -65,6 +65,13 @@ public interface UserMapper extends BaseMapper<User> {
     int selectSelectedLessonPlanNumByUid(@Param("u_id") String u_id);
 
 
+
+    @Select("select u_url " +
+            "from user " +
+            "where user.u_id = #{u_id} ")
+    String selectUrlByUid(@Param("u_id") String u_id);
+
+
     @Update("update user " +
             "set u_nickname = #{nickname} " +
             "where u_id=#{u_id}")

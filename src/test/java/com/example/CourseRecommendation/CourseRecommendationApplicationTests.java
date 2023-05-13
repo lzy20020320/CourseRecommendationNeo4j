@@ -18,7 +18,7 @@ class CourseRecommendationApplicationTests {
 
     @Test
     void contextLoads() throws OrtException {
-//        System.out.println(HanLP.("王玉超老师上哪些课？"));;
+
     }
 
 }

@@ -17,10 +17,16 @@ public interface CourseFollowMapper {
     boolean deleteFollowCourse(@Param("c_no") String c_no,
                                @Param("u_id") String u_id);
 
-    @Select("select course.*" +
+    @Select("select course.* " +
             "from course_follow,course " +
             "where course_follow.c_no = course .c_no and u_follower_id = #{u_id}")
     List<Map<String, Object>> selectFollowCoursesByUid(@Param("u_id") String u_id);
+
+
+    @Select("select course.c_no " +
+            "from course_follow,course " +
+            "where course_follow.c_no = course .c_no and u_follower_id = #{u_id}")
+    List<String> selectFollowCnoByUid(@Param("u_id") String u_id);
 
 
     @Select("select count(*) " +
